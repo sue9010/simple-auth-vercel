@@ -36,4 +36,11 @@
 - [x] **Quote Management UI**: Created the table and button UI for the '견적' page, including checkbox selection.
 - [x] **Quote Form UI**: Created the quote registration form with main section, dynamic line items, and total calculation.
 - [x] **Quote Form UI**: Set '날짜' field default to today's date.
+- [x] **Quote Form Feature**: Implemented auto-fill for '통화' and '메모' based on selected '업체명'.
+- [x] **Quote Form Feature**: Replaced '업체명' autocomplete with a modal for company selection.
+- [x] **Company Selection Modal**: Added search functionality by '업체명'.
+- [x] **UI Fix**: Styled radio buttons to be white circles and search input background to white in Company Selection Modal.
+- [x] **Quote Form Feature**: Implemented auto-fill for '부가세율' based on selected company's '통화'.
+- [x] **Quote Form Feature**: Implemented saving new quotes and line items to Supabase.
+- [x] **Quote Management Feature**: Implemented reading and displaying quotes from Supabase.
 - [x] **Progress Tracking**: Created and updated this `task.md` file.

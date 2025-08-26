@@ -289,20 +289,26 @@
   border: none; /* Remove border from the cell containing the checkbox */
 }
 
-.checkboxCell input[type="checkbox"] {
+.checkboxCell input[type="checkbox"],
+.checkboxCell input[type="radio"] {
   width: 18px;
   height: 18px;
   background-color: #fff; /* White interior */
   border: 1px solid #ccc;
   border-radius: 3px;
   cursor: pointer;
-  /* Optional: remove default browser styling for more control */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  position: relative; /* For custom checked state */
 }
 
-.checkboxCell input[type="checkbox"]:checked {
+.checkboxCell input[type="radio"] {
+  border-radius: 50%; /* Make it circular */
+}
+
+.checkboxCell input[type="checkbox"]:checked,
+.checkboxCell input[type="radio"]:checked {
   background-color: #0070f3; /* Blue when checked */
   border-color: #0070f3;
 }
@@ -314,6 +320,19 @@
   font-size: 14px;
   line-height: 16px;
   text-align: center;
+}
+
+.checkboxCell input[type="radio"]:checked::before {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  background-color: white; /* White dot */
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* Autocomplete styles */
@@ -349,3 +368,50 @@
   background-color: #0070f3;
   color: white;
 }
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Dim background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Ensure it's above everything */
+}
+
+.modalContent {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  max-width: 80%;
+  max-height: 80%;
+  overflow: auto;
+  position: relative;
+}
+
+.modalContent h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.searchContainer {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.searchInput {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 300px; /* Adjust as needed */
+  background-color: white; /* Ensure white background */
+}
+

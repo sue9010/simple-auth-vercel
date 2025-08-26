@@ -1,11 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from '../styles/Home.module.css';
-import QuoteForm from './QuoteForm'; // Import the new form component
+import QuoteForm from './QuoteForm';
+import { supabase } from '../lib/supabaseClient';
 
 export default function QuoteManagement() {
-  const [quotes, setQuotes] = useState([]); // Placeholder for quote data
-  const [selectedQuoteIds, setSelectedQuoteIds] = useState([]); // State for selected quote IDs
-  const [showForm, setShowForm] = useState(false); // State to toggle between table and form
+  const [quotes, setQuotes] = useState([]);
+  const [selectedQuoteIds, setSelectedQuoteIds] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const headers = [
     '', // Checkbox column header
@@ -24,13 +27,55 @@ export default function QuoteManagement() {
 
   const handleFormCancel = () => {
     setShowForm(false);
-    // Future: re-fetch quotes here
+    fetchQuotes(); // Re-fetch quotes after form is closed
   };
 
-  // Placeholder for future data fetching
-  // useEffect(() => { /* fetch quotes */ }, []);
+  const fetchQuotes = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('quotes')
+        .select('id, date, company_name, total_amount, currency, memo')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+      setQuotes(data);
+    } catch (err) {
+      console.error('Error fetching quotes:', err.message);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch quotes on component mount
+  useEffect(() => {
+    fetchQuotes();
+  }, []);
 
   const renderTableBody = () => {
+    if (loading) {
+      return (
+        <tr>
+          <td colSpan={headers.length} style={{ textAlign: 'center', padding: '20px' }}>
+            견적 정보를 불러오는 중...
+          </td>
+        </tr>
+      );
+    }
+
+    if (error) {
+      return (
+        <tr>
+          <td colSpan={headers.length} style={{ textAlign: 'center', padding: '20px', color: 'red' }}>
+            견적 정보를 불러오는데 오류가 발생했습니다: {error}
+          </td>
+        </tr>
+      );
+    }
+
     if (quotes.length === 0) {
       return (
         <tr>
@@ -41,7 +86,6 @@ export default function QuoteManagement() {
       );
     }
 
-    // Placeholder for actual data rows
     return quotes.map(quote => (
       <tr key={quote.id}>
         <td className={styles.checkboxCell}>
@@ -52,8 +96,8 @@ export default function QuoteManagement() {
           />
         </td>
         <td>{quote.date}</td>
-        <td>{quote.companyName}</td>
-        <td>{quote.amount}</td>
+        <td>{quote.company_name}</td>
+        <td>{quote.total_amount ? quote.total_amount.toFixed(2) : '0.00'}</td>
         <td>{quote.currency}</td>
         <td>{quote.memo}</td>
       </tr>
@@ -63,7 +107,7 @@ export default function QuoteManagement() {
   return (
     <div>
       {showForm ? (
-        <QuoteForm onCancel={handleFormCancel} />
+        <QuoteForm onCancel={handleFormCancel} fetchQuotes={fetchQuotes} />
       ) : (
         <>
           <table className={styles.table}>

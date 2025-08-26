@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react';
-import currencies from '../data/currencies.json';
-import { supabase } from '../lib/supabaseClient';
+import { useState, useEffect } from 'react';
 import styles from '../styles/Home.module.css';
+import { supabase } from '../lib/supabaseClient';
+import currencies from '../data/currencies.json';
+import CompanySelectionModal from './CompanySelectionModal';
+
+
+
 
 export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
   const [formData, setFormData] = useState(initialData || {
-    date: new Date().toISOString().split('T')[0], // Set default to today's date (YYYY-MM-DD)
+    date: new Date().toISOString().split('T')[0],
     company_name: '',
     currency: '',
     vat_rate: 0,
@@ -16,27 +20,13 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
     { item_name: '', model_name: '', description: '', quantity: 0, unit_price: 0, amount: 0 }
   ]);
   const [submitting, setSubmitting] = useState(false);
-  const [companySuggestions, setCompanySuggestions] = useState([]);
   const [currencySuggestions, setCurrencySuggestions] = useState([]);
-  const [showCompanySuggestions, setShowCompanySuggestions] = useState(false);
+  const [shippingMethodSuggestions, setShippingMethodSuggestions] = useState([]);
   const [showCurrencySuggestions, setShowCurrencySuggestions] = useState(false);
+  const [showShippingMethodSuggestions, setShowShippingMethodSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const [currentAutocompleteField, setCurrentAutocompleteField] = useState(null);
-
-  const [companiesForAutocomplete, setCompaniesForAutocomplete] = useState([]);
-
-  // Fetch company names for autocomplete
-  useEffect(() => {
-    async function fetchCompanyNames() {
-      const { data, error } = await supabase.from('companies').select('name');
-      if (error) {
-        console.error('Error fetching company names:', error);
-      } else {
-        setCompaniesForAutocomplete(data.map(c => c.name));
-      }
-    }
-    fetchCompanyNames();
-  }, []);
+  const [showCompanyModal, setShowCompanyModal] = useState(false); // State to control company selection modal
 
   // Calculate line item amount
   useEffect(() => {
@@ -54,22 +44,7 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
     const { name, value } = e.target;
     setFormData(prevState => ({ ...prevState, [name]: value }));
 
-    if (name === 'company_name') {
-      if (value.length > 0) {
-        const filteredSuggestions = companiesForAutocomplete.filter(company =>
-          company.toLowerCase().startsWith(value.toLowerCase())
-        );
-        setCompanySuggestions(filteredSuggestions);
-        setShowCompanySuggestions(true);
-        setActiveSuggestionIndex(-1);
-        setCurrentAutocompleteField('company_name');
-      } else {
-        setCompanySuggestions([]);
-        setShowCompanySuggestions(false);
-        setActiveSuggestionIndex(-1);
-        setCurrentAutocompleteField(null);
-      }
-    } else if (name === 'currency') {
+    if (name === 'currency') {
       if (value.length > 0) {
         const filteredSuggestions = currencies.filter(currency =>
           currency.toLowerCase().startsWith(value.toLowerCase())
@@ -81,6 +56,21 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
       } else {
         setCurrencySuggestions([]);
         setShowCurrencySuggestions(false);
+        setActiveSuggestionIndex(-1);
+        setCurrentAutocompleteField(null);
+      }
+    } else if (name === 'shipping_method') {
+      if (value.length > 0) {
+        const filteredSuggestions = shippingMethods.filter(method =>
+          method.toLowerCase().startsWith(value.toLowerCase())
+        );
+        setShippingMethodSuggestions(filteredSuggestions);
+        setShowShippingMethodSuggestions(true);
+        setActiveSuggestionIndex(-1);
+        setCurrentAutocompleteField('shipping_method');
+      } else {
+        setShippingMethodSuggestions([]);
+        setShowShippingMethodSuggestions(false);
         setActiveSuggestionIndex(-1);
         setCurrentAutocompleteField(null);
       }
@@ -109,21 +99,21 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
   };
 
   const handleSelectSuggestion = (suggestion) => {
-    if (currentAutocompleteField === 'company_name') {
-      setFormData(prevState => ({ ...prevState, company_name: suggestion }));
-      setCompanySuggestions([]);
-      setShowCompanySuggestions(false);
-    } else if (currentAutocompleteField === 'currency') {
+    if (currentAutocompleteField === 'currency') {
       setFormData(prevState => ({ ...prevState, currency: suggestion }));
       setCurrencySuggestions([]);
       setShowCurrencySuggestions(false);
+    } else if (currentAutocompleteField === 'shipping_method') {
+      setFormData(prevState => ({ ...prevState, shipping_method: suggestion }));
+      setShippingMethodSuggestions([]);
+      setShowShippingMethodSuggestions(false);
     }
     setActiveSuggestionIndex(-1);
     setCurrentAutocompleteField(null);
   };
 
   const handleKeyDown = (e) => {
-    const currentSuggestions = currentAutocompleteField === 'company_name' ? companySuggestions : currencySuggestions;
+    const currentSuggestions = currentAutocompleteField === 'currency' ? currencySuggestions : shippingMethodSuggestions;
     if (currentSuggestions.length === 0) return; 
 
     if (e.key === 'ArrowDown') {
@@ -144,8 +134,8 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
         handleSubmit(e); 
       }
     } else if (e.key === 'Escape') {
-      setShowCompanySuggestions(false);
       setShowCurrencySuggestions(false);
+      setShowShippingMethodSuggestions(false);
       setActiveSuggestionIndex(-1);
       setCurrentAutocompleteField(null);
     }
@@ -155,11 +145,71 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
     e.preventDefault();
     setSubmitting(true);
 
-    // TODO: Implement Supabase insert/update logic for quotes
-    console.log('Quote data submitted:', { ...formData, line_items: lineItems });
-    alert('견적 정보가 저장되었습니다. (기능 구현 예정)');
-    setSubmitting(false);
-    onCancel();
+    try {
+      // 1. Insert into quotes table
+      const { data: quoteData, error: quoteError } = await supabase
+        .from('quotes')
+        .insert([
+          {
+            date: formData.date,
+            company_name: formData.company_name,
+            currency: formData.currency,
+            vat_rate: formData.vat_rate,
+            memo: formData.memo,
+            remarks: formData.remarks,
+            subtotal: subtotal,
+            vat_amount: vatAmount,
+            total_amount: totalAmount
+          }
+        ])
+        .select(); // Use .select() to get the inserted data including the ID
+
+      if (quoteError) {
+        throw quoteError;
+      }
+
+      const newQuoteId = quoteData[0].id;
+
+      // 2. Insert into quote_line_items table
+      const lineItemsToInsert = lineItems.map(item => ({
+        quote_id: newQuoteId,
+        item_name: item.item_name,
+        model_name: item.model_name,
+        description: item.description,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        amount: item.amount
+      }));
+
+      const { error: lineItemError } = await supabase
+        .from('quote_line_items')
+        .insert(lineItemsToInsert);
+
+      if (lineItemError) {
+        throw lineItemError;
+      }
+
+      alert('견적 정보가 성공적으로 저장되었습니다.');
+      onCancel(); // Close the form/modal on success
+      fetchQuotes(); // Refresh the main list
+    } catch (error) {
+      console.error('견적 저장 중 오류 발생:', error.message);
+      alert(`견적 저장 중 오류 발생: ${error.message}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCompanySelected = (company) => {
+    const vatRate = company.currency === 'KRW' ? 10 : 0;
+    setFormData(prevState => ({
+      ...prevState,
+      company_name: company.name,
+      currency: company.currency || '',
+      memo: company.memo || '',
+      vat_rate: vatRate
+    }));
+    setShowCompanyModal(false);
   };
 
   // Calculate totals
@@ -188,24 +238,9 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
               value={formData.company_name}
               onChange={handleMainFormChange}
               disabled={submitting}
-              onFocus={() => formData.company_name.length > 0 && setCompanySuggestions(companiesForAutocomplete.filter(c => c.toLowerCase().startsWith(formData.company_name.toLowerCase())))} // Initial suggestions on focus
-              onBlur={() => setTimeout(() => { setShowCompanySuggestions(false); setCurrentAutocompleteField(null); setActiveSuggestionIndex(-1); }, 100)}
-              onKeyDown={e => currentAutocompleteField === 'company_name' ? handleKeyDown(e) : undefined}
+              readOnly // Make it readOnly as selection is via modal
+              onClick={() => setShowCompanyModal(true)} // Open modal on click
             />
-            {currentAutocompleteField === 'company_name' && showCompanySuggestions && companySuggestions.length > 0 && (
-              <ul className={styles.autocompleteDropdown}>
-                {companySuggestions.map((suggestion, index) => (
-                  <li
-                    key={suggestion}
-                    className={`${styles.autocompleteItem} ${index === activeSuggestionIndex ? styles.autocompleteItemActive : ''}`}
-                    onClick={() => handleSelectSuggestion(suggestion)}
-                    onMouseEnter={() => setActiveSuggestionIndex(index)}
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
           <div className={styles.formField}>
             <label htmlFor="currency" className={styles.label}>통화</label>
@@ -307,6 +342,12 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
           <button type="submit" className={styles.button} disabled={submitting}>저장</button>
         </div>
       </form>
+      {showCompanyModal && (
+        <CompanySelectionModal
+          onSelectCompany={handleCompanySelected}
+          onClose={() => setShowCompanyModal(false)}
+        />
+      )}
     </div>
   );
 }
