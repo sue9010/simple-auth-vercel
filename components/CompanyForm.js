@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import styles from '../styles/Home.module.css'; // Adjust path as needed
-import { supabase } from '../lib/supabaseClient';
 import countries from '../data/countries.json'; // Import the country list
 import currencies from '../data/currencies.json'; // Import the currency list
 import shippingMethods from '../data/shipping_methods.json'; // Import the shipping methods list
+import { supabase } from '../lib/supabaseClient';
+import styles from '../styles/Home.module.css'; // Adjust path as needed
 
 export default function CompanyForm({ onCancel, fetchCompanies, initialData }) { // Receive onCancel prop
   // State for each input field
@@ -149,7 +149,7 @@ export default function CompanyForm({ onCancel, fetchCompanies, initialData }) {
       setSubmitting(false);
     }
   };
-
+ 
   const fields = [
     { name: 'name', label: '업체명' },
     { name: 'country', label: '국가' },
