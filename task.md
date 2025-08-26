@@ -26,5 +26,9 @@
 - [x] **UI Fix**: Styled table checkboxes (size, centering, white interior).
 - [x] **UI Fix**: Removed border from the table cell containing the checkbox.
 - [x] **UI Improvement**: Made '업체명' field read-only in company edit form.
-- [x] **Delete Feature**: Implemented data deletion from Supabase for selected companies.
+- [x] **Autocomplete Feature**: Implemented autocomplete for '국가' field using static country data.
+- [x] **UI Fix**: Set autocomplete suggestion text color to black.
+- [x] **UX Improvement**: Added keyboard navigation (arrow keys, Enter, Esc) to country autocomplete.
+- [x] **Autocomplete Feature (Currency)**: Implemented autocomplete for '통화' field using static currency data.
+- [x] **Autocomplete Feature (Shipping Method)**: Implemented autocomplete for '운송방법' field using static shipping method data.
 - [x] **Progress Tracking**: Created and updated this `task.md` file.
