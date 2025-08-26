@@ -33,4 +33,7 @@
 - [x] **Autocomplete Feature (Shipping Method)**: Implemented autocomplete for '운송방법' field using static shipping method data.
 - [x] **Dashboard Feature**: Added collapsible sub-menu to '판매' navigation link.
 - [x] **UI Fix**: Corrected sub-menu active text color and ensured all previous CSS styles are present.
+- [x] **Quote Management UI**: Created the table and button UI for the '견적' page, including checkbox selection.
+- [x] **Quote Form UI**: Created the quote registration form with main section, dynamic line items, and total calculation.
+- [x] **Quote Form UI**: Set '날짜' field default to today's date.
 - [x] **Progress Tracking**: Created and updated this `task.md` file.

@@ -28,7 +28,7 @@
 .form {
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* Keep gap for overall spacing */
+  /* gap: 1rem; Keep gap for overall spacing */
 }
 
 .formField {
@@ -40,7 +40,7 @@
 
 .label {
   width: 120px; /* Fixed width for labels */
-  text-align: right;
+  text-align: center;
   margin-right: 1rem;
   font-weight: 500;
   color: #555;
@@ -99,7 +99,7 @@
 .dashboardContainer {
   display: flex;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f8f9fa;
 }
 
@@ -203,6 +203,43 @@
 
 .mainContent h1 {
   color: #343a40;
+}
+
+/* --- Quote Form Specific Styles --- */
+.sectionTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+  text-align: left;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns */
+  gap: 1rem;
+}
+
+.totalSummary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Three columns for totals */
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.lineItemsContainer {
+  margin-top: 1rem;
+}
+
+.lineItemsContainer .table {
+  margin-top: 0;
+}
+
+.lineItemsContainer .table input {
+  width: 100%; /* Ensure inputs fill table cells */
+  box-sizing: border-box;
 }
 
 /* --- Table and Button Styles for Content --- */

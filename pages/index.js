@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import styles from "@/styles/Home.module.css";
 import CompanyRegistration from '../components/CompanyRegistration'; // Import the new component
+import QuoteManagement from '../components/QuoteManagement'; // Import the new component
 
 export default function Home() {
   const [session, setSession] = useState(null);
@@ -71,6 +72,8 @@ export default function Home() {
       switch (activeTab) {
         case '업체 등록':
           return <CompanyRegistration />;
+        case '견적':
+          return <QuoteManagement />;
         // Add other cases for other tabs here in the future
         default:
           return <h1>{activeTab}</h1>;
