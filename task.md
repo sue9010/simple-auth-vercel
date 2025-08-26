@@ -31,4 +31,6 @@
 - [x] **UX Improvement**: Added keyboard navigation (arrow keys, Enter, Esc) to country autocomplete.
 - [x] **Autocomplete Feature (Currency)**: Implemented autocomplete for '통화' field using static currency data.
 - [x] **Autocomplete Feature (Shipping Method)**: Implemented autocomplete for '운송방법' field using static shipping method data.
+- [x] **Dashboard Feature**: Added collapsible sub-menu to '판매' navigation link.
+- [x] **UI Fix**: Corrected sub-menu active text color and ensured all previous CSS styles are present.
 - [x] **Progress Tracking**: Created and updated this `task.md` file.

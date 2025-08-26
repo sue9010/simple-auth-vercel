@@ -136,6 +136,34 @@
   color: #fff;
 }
 
+.navSubMenu {
+  padding-left: 1rem; /* Indent sub-menu items */
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.navSubLink {
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.25rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 400;
+  font-size: 0.9rem;
+  color: #6c757d;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.navSubLink:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.navSubLink.navLinkActive {
+  color: #fff; /* Ensure white text for active sub-links */
+}
+
 .navSpacer {
   flex-grow: 1; /* Pushes user info to the bottom */
 }

@@ -10,6 +10,7 @@ export default function Home() {
   const [displayName, setDisplayName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
   const [activeTab, setActiveTab] = useState('구매'); // For dashboard
+  const [showSalesSubMenu, setShowSalesSubMenu] = useState(false); // State for sales sub-menu
 
   useEffect(() => {
     const getSession = async () => {
@@ -76,17 +77,51 @@ export default function Home() {
       }
     };
 
+    const navItems = [
+      { label: '구매', tab: '구매' },
+      { label: '송금', tab: '송금' },
+      { 
+        label: '판매', 
+        isToggle: true, 
+        onClick: () => setShowSalesSubMenu(!showSalesSubMenu), 
+        subItems: [
+          { label: '견적', tab: '견적' },
+          { label: '주문', tab: '주문' },
+          { label: '생산', tab: '생산' },
+          { label: '출고', tab: '출고' },
+          { label: '배송', tab: '배송' }
+        ]
+      },
+      { label: '입금', tab: '입금' },
+      { label: '업체 등록', tab: '업체 등록' },
+      { label: '제품 등록', tab: '제품 등록' }
+    ];
+
     return (
       <div className={styles.dashboardContainer}>
         <nav className={styles.navBar}>
           <div className={styles.navLinks}>
-            {['구매', '송금', '판매', '입금', '업체 등록', '제품 등록'].map(tab => (
-              <div 
-                key={tab}
-                className={`${styles.navLink} ${activeTab === tab ? styles.navLinkActive : ''}`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
+            {navItems.map(item => (
+              <div key={item.label}>
+                <div 
+                  className={`${styles.navLink} ${activeTab === item.tab ? styles.navLinkActive : ''}`}
+                  onClick={item.isToggle ? item.onClick : () => setActiveTab(item.tab)}
+                >
+                  {item.label}
+                </div>
+                {item.isToggle && showSalesSubMenu && item.subItems && (
+                  <div className={styles.navSubMenu}>
+                    {item.subItems.map(subItem => (
+                      <div
+                        key={subItem.label}
+                        className={`${styles.navLink} ${styles.navSubLink} ${activeTab === subItem.tab ? styles.navLinkActive : ''}`}
+                        onClick={() => setActiveTab(subItem.tab)}
+                      >
+                        {subItem.label}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
