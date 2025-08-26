@@ -47,7 +47,7 @@ export default function CompanySelectionModal({ onSelectCompany, onClose }) {
   const headers = [
     '', // Radio button column
     '업체명', '국가', '주소', '담당자', '전화번호', 
-    '이메일', '통화', '운송방법', '운송 계정', '메모'
+    '이메일', '통화', '운송방법', '운송계정', '메모'
   ];
 
   return (

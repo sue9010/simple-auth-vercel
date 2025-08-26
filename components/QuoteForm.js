@@ -1,44 +1,61 @@
-import { useState, useEffect } from 'react';
-import styles from '../styles/Home.module.css';
-import { supabase } from '../lib/supabaseClient';
+import { useEffect, useState } from 'react';
 import currencies from '../data/currencies.json';
+import { supabase } from '../lib/supabaseClient';
+import styles from '../styles/Home.module.css';
 import CompanySelectionModal from './CompanySelectionModal';
 
+export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
+  const isEditMode = !!quoteToEdit;
 
-
-
-export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
-  const [formData, setFormData] = useState(initialData || {
+  const getInitialFormData = () => ({
     date: new Date().toISOString().split('T')[0],
     company_name: '',
+    company_id: null,
     currency: '',
     vat_rate: 0,
     memo: '',
     remarks: ''
   });
-  const [lineItems, setLineItems] = useState(initialData?.line_items || [
-    { item_name: '', model_name: '', description: '', quantity: 0, unit_price: 0, amount: 0 }
-  ]);
+
+  const getInitialLineItems = () => [
+    { item_name: '', model_name: '', description: '', quantity: 1, unit_price: 0, amount: 0 }
+  ];
+
+  const [formData, setFormData] = useState(getInitialFormData());
+  const [lineItems, setLineItems] = useState(getInitialLineItems());
   const [submitting, setSubmitting] = useState(false);
   const [currencySuggestions, setCurrencySuggestions] = useState([]);
-  const [shippingMethodSuggestions, setShippingMethodSuggestions] = useState([]);
   const [showCurrencySuggestions, setShowCurrencySuggestions] = useState(false);
-  const [showShippingMethodSuggestions, setShowShippingMethodSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
-  const [currentAutocompleteField, setCurrentAutocompleteField] = useState(null);
-  const [showCompanyModal, setShowCompanyModal] = useState(false); // State to control company selection modal
+  const [showCompanyModal, setShowCompanyModal] = useState(false);
 
-  // Calculate line item amount
+  useEffect(() => {
+    if (isEditMode && quoteToEdit) {
+      setFormData({
+        date: quoteToEdit.date,
+        company_name: quoteToEdit.company_name,
+        company_id: quoteToEdit.company_id,
+        currency: quoteToEdit.currency,
+        vat_rate: quoteToEdit.vat_rate,
+        memo: quoteToEdit.memo || '',
+        remarks: quoteToEdit.remarks || ''
+      });
+      setLineItems(quoteToEdit.quote_line_items && quoteToEdit.quote_line_items.length > 0 ? quoteToEdit.quote_line_items : getInitialLineItems());
+    } else {
+      setFormData(getInitialFormData());
+      setLineItems(getInitialLineItems());
+    }
+  }, [quoteToEdit, isEditMode]);
+
   useEffect(() => {
     const updatedLineItems = lineItems.map(item => ({
       ...item,
       amount: (parseFloat(item.quantity) || 0) * (parseFloat(item.unit_price) || 0)
     }));
-    // Only update if amounts have actually changed to prevent infinite loops
     if (JSON.stringify(updatedLineItems) !== JSON.stringify(lineItems)) {
       setLineItems(updatedLineItems);
     }
-  }, [lineItems.map(item => [item.quantity, item.unit_price]).flat().join('-')]); // Dependency on quantity/unit_price
+  }, [lineItems]);
 
   const handleMainFormChange = (e) => {
     const { name, value } = e.target;
@@ -46,33 +63,12 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
 
     if (name === 'currency') {
       if (value.length > 0) {
-        const filteredSuggestions = currencies.filter(currency =>
-          currency.toLowerCase().startsWith(value.toLowerCase())
-        );
+        const filteredSuggestions = currencies.filter(c => c.toLowerCase().startsWith(value.toLowerCase()));
         setCurrencySuggestions(filteredSuggestions);
         setShowCurrencySuggestions(true);
         setActiveSuggestionIndex(-1);
-        setCurrentAutocompleteField('currency');
       } else {
-        setCurrencySuggestions([]);
         setShowCurrencySuggestions(false);
-        setActiveSuggestionIndex(-1);
-        setCurrentAutocompleteField(null);
-      }
-    } else if (name === 'shipping_method') {
-      if (value.length > 0) {
-        const filteredSuggestions = shippingMethods.filter(method =>
-          method.toLowerCase().startsWith(value.toLowerCase())
-        );
-        setShippingMethodSuggestions(filteredSuggestions);
-        setShowShippingMethodSuggestions(true);
-        setActiveSuggestionIndex(-1);
-        setCurrentAutocompleteField('shipping_method');
-      } else {
-        setShippingMethodSuggestions([]);
-        setShowShippingMethodSuggestions(false);
-        setActiveSuggestionIndex(-1);
-        setCurrentAutocompleteField(null);
       }
     }
   };
@@ -85,7 +81,7 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
   };
 
   const handleAddLineItem = () => {
-    setLineItems([...lineItems, { item_name: '', model_name: '', description: '', quantity: 0, unit_price: 0, amount: 0 }]);
+    setLineItems([...lineItems, { item_name: '', model_name: '', description: '', quantity: 1, unit_price: 0, amount: 0 }]);
   };
 
   const handleRemoveLineItem = (index) => {
@@ -99,45 +95,27 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
   };
 
   const handleSelectSuggestion = (suggestion) => {
-    if (currentAutocompleteField === 'currency') {
-      setFormData(prevState => ({ ...prevState, currency: suggestion }));
-      setCurrencySuggestions([]);
-      setShowCurrencySuggestions(false);
-    } else if (currentAutocompleteField === 'shipping_method') {
-      setFormData(prevState => ({ ...prevState, shipping_method: suggestion }));
-      setShippingMethodSuggestions([]);
-      setShowShippingMethodSuggestions(false);
-    }
+    setFormData(prevState => ({ ...prevState, currency: suggestion }));
+    setShowCurrencySuggestions(false);
     setActiveSuggestionIndex(-1);
-    setCurrentAutocompleteField(null);
   };
 
   const handleKeyDown = (e) => {
-    const currentSuggestions = currentAutocompleteField === 'currency' ? currencySuggestions : shippingMethodSuggestions;
-    if (currentSuggestions.length === 0) return; 
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setActiveSuggestionIndex(prevIndex =>
-        (prevIndex + 1) % currentSuggestions.length
-      );
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setActiveSuggestionIndex(prevIndex =>
-        (prevIndex - 1 + currentSuggestions.length) % currentSuggestions.length
-      );
-    } else if (e.key === 'Enter') {
-      e.preventDefault();
-      if (activeSuggestionIndex !== -1) {
-        handleSelectSuggestion(currentSuggestions[activeSuggestionIndex]);
-      } else {
-        handleSubmit(e); 
+    if (showCurrencySuggestions && currencySuggestions.length > 0) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveSuggestionIndex(prev => (prev + 1) % currencySuggestions.length);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveSuggestionIndex(prev => (prev - 1 + currencySuggestions.length) % currencySuggestions.length);
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (activeSuggestionIndex > -1) {
+          handleSelectSuggestion(currencySuggestions[activeSuggestionIndex]);
+        }
+      } else if (e.key === 'Escape') {
+        setShowCurrencySuggestions(false);
       }
-    } else if (e.key === 'Escape') {
-      setShowCurrencySuggestions(false);
-      setShowShippingMethodSuggestions(false);
-      setActiveSuggestionIndex(-1);
-      setCurrentAutocompleteField(null);
     }
   };
 
@@ -145,56 +123,90 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
     e.preventDefault();
     setSubmitting(true);
 
+    const quotePayload = {
+      date: formData.date,
+      company_name: formData.company_name,
+      company_id: formData.company_id,
+      currency: formData.currency,
+      vat_rate: formData.vat_rate,
+      memo: formData.memo,
+      remarks: formData.remarks,
+      subtotal: subtotal,
+      vat_amount: vatAmount,
+      total_amount: totalAmount
+    };
+
     try {
-      // 1. Insert into quotes table
-      const { data: quoteData, error: quoteError } = await supabase
-        .from('quotes')
-        .insert([
-          {
-            date: formData.date,
-            company_name: formData.company_name,
-            currency: formData.currency,
-            vat_rate: formData.vat_rate,
-            memo: formData.memo,
-            remarks: formData.remarks,
-            subtotal: subtotal,
-            vat_amount: vatAmount,
-            total_amount: totalAmount
-          }
-        ])
-        .select(); // Use .select() to get the inserted data including the ID
+      if (isEditMode) {
+        // Update logic
+        const { error: quoteError } = await supabase
+          .from('quotes')
+          .update(quotePayload)
+          .eq('id', quoteToEdit.id);
 
-      if (quoteError) {
-        throw quoteError;
+        if (quoteError) throw quoteError;
+
+        // Delete old line items
+        const { error: deleteError } = await supabase
+          .from('quote_line_items')
+          .delete()
+          .eq('quote_id', quoteToEdit.id);
+
+        if (deleteError) throw deleteError;
+
+        // Insert new line items
+        const newLineItems = lineItems.map(item => ({
+          item_name: item.item_name,
+          model_name: item.model_name,
+          description: item.description,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          amount: item.amount,
+          quote_id: quoteToEdit.id,
+        }));
+        const { error: itemsError } = await supabase
+          .from('quote_line_items')
+          .insert(newLineItems);
+
+        if (itemsError) throw itemsError;
+
+        alert('견적 정보가 성공적으로 수정되었습니다.');
+
+      } else {
+        // Insert logic (Existing functionality)
+        const { data: quoteData, error: quoteError } = await supabase
+          .from('quotes')
+          .insert([quotePayload])
+          .select();
+
+        if (quoteError) throw quoteError;
+
+        const newQuoteId = quoteData[0].id;
+        const newLineItems = lineItems.map(item => ({
+          item_name: item.item_name,
+          model_name: item.model_name,
+          description: item.description,
+          quantity: item.quantity,
+          unit_price: item.unit_price,
+          amount: item.amount,
+          quote_id: newQuoteId,
+        }));
+
+        const { error: itemsError } = await supabase
+          .from('quote_line_items')
+          .insert(newLineItems);
+
+        if (itemsError) throw itemsError;
+
+        alert('견적 정보가 성공적으로 저장되었습니다.');
       }
+      
+      fetchQuotes();
+      onCancel();
 
-      const newQuoteId = quoteData[0].id;
-
-      // 2. Insert into quote_line_items table
-      const lineItemsToInsert = lineItems.map(item => ({
-        quote_id: newQuoteId,
-        item_name: item.item_name,
-        model_name: item.model_name,
-        description: item.description,
-        quantity: item.quantity,
-        unit_price: item.unit_price,
-        amount: item.amount
-      }));
-
-      const { error: lineItemError } = await supabase
-        .from('quote_line_items')
-        .insert(lineItemsToInsert);
-
-      if (lineItemError) {
-        throw lineItemError;
-      }
-
-      alert('견적 정보가 성공적으로 저장되었습니다.');
-      onCancel(); // Close the form/modal on success
-      fetchQuotes(); // Refresh the main list
     } catch (error) {
-      console.error('견적 저장 중 오류 발생:', error.message);
-      alert(`견적 저장 중 오류 발생: ${error.message}`);
+      console.error('Error saving quote:', error.message);
+      alert(`Error: ${error.message}`);
     } finally {
       setSubmitting(false);
     }
@@ -205,6 +217,7 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
     setFormData(prevState => ({
       ...prevState,
       company_name: company.name,
+      company_id: company.id,
       currency: company.currency || '',
       memo: company.memo || '',
       vat_rate: vatRate
@@ -212,35 +225,32 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
     setShowCompanyModal(false);
   };
 
-  // Calculate totals
-  const subtotal = lineItems.reduce((sum, item) => sum + item.amount, 0);
+  const subtotal = lineItems.reduce((sum, item) => sum + (item.amount || 0), 0);
   const vatAmount = subtotal * (parseFloat(formData.vat_rate) / 100 || 0);
   const totalAmount = subtotal + vatAmount;
 
   return (
     <div className={styles.formCard} style={{ maxWidth: '1600px', margin: 'auto' }}>
-      <h1>{initialData ? '견적 정보 수정' : '신규 견적 등록'}</h1>
+      <h1>{isEditMode ? '견적 정보 수정' : '신규 견적 등록'}</h1>
       <form onSubmit={handleSubmit} className={styles.form}>
-        {/* Main Section */}
         <div className={styles.sectionTitle}>기본 정보</div>
         <div className={styles.formGrid}>
           <div className={styles.formField}>
             <label htmlFor="date" className={styles.label}>날짜</label>
-            <input id="date" className={styles.input} type="date" name="date" value={formData.date} onChange={handleMainFormChange} disabled={submitting} />
+            <input id="date" className={styles.input} type="date" name="date" value={formData.date} onChange={handleMainFormChange} disabled={submitting || isEditMode} />
           </div>
           <div className={styles.formField}>
             <label htmlFor="company_name" className={styles.label}>업체명</label>
-            <input
+            <button
+              type="button"
               id="company_name"
               className={styles.input}
-              type="text"
-              name="company_name"
-              value={formData.company_name}
-              onChange={handleMainFormChange}
-              disabled={submitting}
-              readOnly // Make it readOnly as selection is via modal
-              onClick={() => setShowCompanyModal(true)} // Open modal on click
-            />
+              onClick={() => !isEditMode && setShowCompanyModal(true)}
+              disabled={submitting || isEditMode}
+              style={{ textAlign: 'left', color: 'black', backgroundColor: isEditMode ? '#e9ecef' : 'white', cursor: isEditMode ? 'not-allowed' : 'pointer' }}
+            >
+              {formData.company_name || '업체를 선택하세요'}
+            </button>
           </div>
           <div className={styles.formField}>
             <label htmlFor="currency" className={styles.label}>통화</label>
@@ -252,11 +262,11 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
               value={formData.currency}
               onChange={handleMainFormChange}
               disabled={submitting}
-              onFocus={() => formData.currency.length > 0 && setCurrencySuggestions(currencies.filter(c => c.toLowerCase().startsWith(formData.currency.toLowerCase())))} // Initial suggestions on focus
-              onBlur={() => setTimeout(() => { setShowCurrencySuggestions(false); setCurrentAutocompleteField(null); setActiveSuggestionIndex(-1); }, 100)}
-              onKeyDown={e => currentAutocompleteField === 'currency' ? handleKeyDown(e) : undefined}
+              onFocus={() => formData.currency.length > 0 && setCurrencySuggestions(currencies.filter(c => c.toLowerCase().startsWith(formData.currency.toLowerCase())))}
+              onBlur={() => setTimeout(() => setShowCurrencySuggestions(false), 100)}
+              onKeyDown={handleKeyDown}
             />
-            {currentAutocompleteField === 'currency' && showCurrencySuggestions && currencySuggestions.length > 0 && (
+            {showCurrencySuggestions && currencySuggestions.length > 0 && (
               <ul className={styles.autocompleteDropdown}>
                 {currencySuggestions.map((suggestion, index) => (
                   <li
@@ -285,61 +295,58 @@ export default function QuoteForm({ onCancel, fetchQuotes, initialData }) {
           </div>
         </div>
 
-        {/* Line Items Section */}
         <div className={styles.sectionTitle} style={{ marginTop: '2rem' }}>품목 정보</div>
-        <div className={styles.lineItemsContainer}>
-          <table className={styles.table} style={{ width: '100%' }}>
-            <thead>
-              <tr>
-                <th>품목명</th>
-                <th>모델명</th>
-                <th>Description</th>
-                <th>수량</th>
-                <th>단가</th>
-                <th>금액</th>
-                <th></th> {/* For delete button */}
+        <table className={styles.table} style={{ width: '100%' }}>
+          <thead>
+            <tr>
+              <th>품목명</th>
+              <th>모델명</th>
+              <th>Description</th>
+              <th>수량</th>
+              <th>단가</th>
+              <th>금액</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {lineItems.map((item, index) => (
+              <tr key={index}>
+                <td><input type="text" name="item_name" value={item.item_name} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
+                <td><input type="text" name="model_name" value={item.model_name} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
+                <td><input type="text" name="description" value={item.description} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
+                <td><input type="number" name="quantity" value={item.quantity} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
+                <td><input type="number" name="unit_price" value={item.unit_price} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
+                <td><input type="text" name="amount" value={(item.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly className={styles.input} style={{ backgroundColor: '#e9ecef' }} /></td>
+                <td>
+                  <button type="button" onClick={() => handleRemoveLineItem(index)} className={styles.button} style={{ backgroundColor: '#dc3545' }} disabled={submitting || lineItems.length === 1}>삭제</button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {lineItems.map((item, index) => (
-                <tr key={index}>
-                  <td><input type="text" name="item_name" value={item.item_name} onChange={e => handleLineItemChange(index, e)} className={styles.input} style={{ width: 'auto' }} disabled={submitting} /></td>
-                  <td><input type="text" name="model_name" value={item.model_name} onChange={e => handleLineItemChange(index, e)} className={styles.input} style={{ width: 'auto' }} disabled={submitting} /></td>
-                  <td><input type="text" name="description" value={item.description} onChange={e => handleLineItemChange(index, e)} className={styles.input} style={{ width: 'auto' }} disabled={submitting} /></td>
-                  <td><input type="number" name="quantity" value={item.quantity} onChange={e => handleLineItemChange(index, e)} className={styles.input} style={{ width: 'auto' }} disabled={submitting} /></td>
-                  <td><input type="number" name="unit_price" value={item.unit_price} onChange={e => handleLineItemChange(index, e)} className={styles.input} style={{ width: 'auto' }} disabled={submitting} /></td>
-                  <td><input type="text" name="amount" value={item.amount.toFixed(2)} readOnly className={styles.input} style={{ width: 'auto', backgroundColor: '#e9ecef' }} /></td>
-                  <td>
-                    <button type="button" onClick={() => handleRemoveLineItem(index)} className={styles.button} style={{ backgroundColor: '#dc3545', padding: '5px 10px', fontSize: '12px' }} disabled={submitting || lineItems.length === 1}>삭제</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <button type="button" onClick={handleAddLineItem} className={styles.button} style={{ width: 'auto', marginTop: '1rem' }} disabled={submitting}>품목 추가</button>
-        </div>
+            ))}
+          </tbody>
+        </table>
+        <button type="button" onClick={handleAddLineItem} className={styles.button} style={{ marginTop: '1rem' }} disabled={submitting}>품목 추가</button>
 
-        {/* Totals Section */}
         <div className={styles.sectionTitle} style={{ marginTop: '2rem' }}>총 금액</div>
         <div className={styles.totalSummary}>
           <div className={styles.formField}>
             <label className={styles.label}>공급가</label>
-            <input className={styles.input} type="text" value={subtotal.toFixed(2)} readOnly style={{ backgroundColor: '#e9ecef' }} />
+            <input className={styles.input} type="text" value={subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly style={{ backgroundColor: '#e9ecef' }} />
           </div>
           <div className={styles.formField}>
             <label className={styles.label}>VAT</label>
-            <input className={styles.input} type="text" value={vatAmount.toFixed(2)} readOnly style={{ backgroundColor: '#e9ecef' }} />
+            <input className={styles.input} type="text" value={vatAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly style={{ backgroundColor: '#e9ecef' }} />
           </div>
           <div className={styles.formField}>
             <label className={styles.label}>합계</label>
-            <input className={styles.input} type="text" value={totalAmount.toFixed(2)} readOnly style={{ backgroundColor: '#e9ecef' }} />
+            <input className={styles.input} type="text" value={totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly style={{ backgroundColor: '#e9ecef' }} />
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className={styles.buttonGroup} style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
           <button type="button" className={styles.button} onClick={onCancel} style={{ backgroundColor: '#6c757d' }} disabled={submitting}>취소</button>
-          <button type="submit" className={styles.button} disabled={submitting}>저장</button>
+          <button type="submit" className={styles.button} disabled={submitting}>
+            {isEditMode ? '수정' : '저장'}
+          </button>
         </div>
       </form>
       {showCompanyModal && (

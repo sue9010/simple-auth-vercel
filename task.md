@@ -43,4 +43,5 @@
 - [x] **Quote Form Feature**: Implemented auto-fill for '부가세율' based on selected company's '통화'.
 - [x] **Quote Form Feature**: Implemented saving new quotes and line items to Supabase.
 - [x] **Quote Management Feature**: Implemented reading and displaying quotes from Supabase.
+- [x] **Quote Management Feature (Update)**: Implemented updating quotes and their line items.
 - [x] **Progress Tracking**: Created and updated this `task.md` file.
