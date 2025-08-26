@@ -9,4 +9,5 @@
 - [x] **Sign-up Feature**: Added a sign-up form and logic to the main page.
 - [x] **UI Improvement**: Redesigned the login/signup page to be simple and modern.
 - [x] **Display Name Feature**: Added display name to sign-up and show it on login.
+- [x] **UX Improvement**: Changed sign-up confirmation from an alert to a new window with a message.
 - [x] **Progress Tracking**: Created and updated this `task.md` file.
