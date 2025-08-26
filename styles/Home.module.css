@@ -158,3 +158,39 @@
 .mainContent h1 {
   color: #343a40;
 }
+
+/* --- Table and Button Styles for Content --- */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.table th, .table td {
+  border: 1px solid #dee2e6;
+  padding: 0.75rem;
+  text-align: left;
+  color: #343a40;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #343a40;
+}
+
+.buttonGroup {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Make buttons in group smaller than the main login button */
+.buttonGroup .button {
+  width: auto;
+  padding: 8px 16px;
+  font-size: 14px;
+}

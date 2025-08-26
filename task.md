@@ -11,4 +11,9 @@
 - [x] **Display Name Feature**: Added display name to sign-up and show it on login.
 - [x] **UX Improvement**: Changed sign-up confirmation from an alert to a new window with a message.
 - [x] **Dashboard UI**: Implemented a basic dashboard layout with a left navigation bar.
+- [x] **Dashboard Feature**: Added '업체 등록' and '제품 등록' tabs to the navigation bar.
+- [x] **Company Registration UI**: Created the table and button UI for the '업체 등록' page.
+- [x] **Database Connection**: Created 'companies' table in Supabase and set RLS policy.
+- [x] **Read Feature**: Implemented data fetching from Supabase to display companies in the table.
+- [x] **UI Fix**: Darkened the table header and body text color for better visibility.
 - [x] **Progress Tracking**: Created and updated this `task.md` file.

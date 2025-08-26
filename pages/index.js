@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import styles from "@/styles/Home.module.css";
+import CompanyRegistration from '../components/CompanyRegistration'; // Import the new component
 
 export default function Home() {
   const [session, setSession] = useState(null);
@@ -64,34 +65,45 @@ export default function Home() {
     await supabase.auth.signOut();
   };
 
-  const renderDashboard = () => (
-    <div className={styles.dashboardContainer}>
-      <nav className={styles.navBar}>
-        <div className={styles.navLinks}>
-          {['구매', '송금', '판매', '입금'].map(tab => (
-            <div 
-              key={tab}
-              className={`${styles.navLink} ${activeTab === tab ? styles.navLinkActive : ''}`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </div>
-          ))}
-        </div>
-        <div className={styles.navSpacer}></div>
-        <div className={styles.userInfo}>
-          <p>{session.user.user_metadata.display_name || session.user.email}</p>
-          <button className={styles.logoutButton} onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-      </nav>
-      <main className={styles.mainContent}>
-        <h1>{activeTab}</h1>
-        {/* Content for each tab will go here */}
-      </main>
-    </div>
-  );
+    const renderDashboard = () => {
+    const renderContent = () => {
+      switch (activeTab) {
+        case '업체 등록':
+          return <CompanyRegistration />;
+        // Add other cases for other tabs here in the future
+        default:
+          return <h1>{activeTab}</h1>;
+      }
+    };
+
+    return (
+      <div className={styles.dashboardContainer}>
+        <nav className={styles.navBar}>
+          <div className={styles.navLinks}>
+            {['구매', '송금', '판매', '입금', '업체 등록', '제품 등록'].map(tab => (
+              <div 
+                key={tab}
+                className={`${styles.navLink} ${activeTab === tab ? styles.navLinkActive : ''}`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab}
+              </div>
+            ))}
+          </div>
+          <div className={styles.navSpacer}></div>
+          <div className={styles.userInfo}>
+            <p>{session.user.user_metadata.display_name || session.user.email}</p>
+            <button className={styles.logoutButton} onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
+        </nav>
+        <main className={styles.mainContent}>
+          {renderContent()}
+        </main>
+      </div>
+    );
+  };
 
   const renderLoginForm = () => (
     <div className={styles.container}>
