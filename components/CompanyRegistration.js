@@ -1,39 +1,105 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import styles from '../styles/Home.module.css';
+import CompanyForm from './CompanyForm'; // Import the new form component
 
 export default function CompanyRegistration() {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showForm, setShowForm] = useState(false); // State to toggle between table and form
+  const [selectedCompanyIds, setSelectedCompanyIds] = useState([]); // State for selected company IDs
+  const [companyToEdit, setCompanyToEdit] = useState(null); // State for company being edited
 
   const headers = [
+    '', // Checkbox column header
     '업체명', '국가', '주소', '담당자', '전화번호', 
     '이메일', '통화', '운송방법', '운송 계정', '메모'
   ];
 
+  // Function to fetch companies
+  async function fetchCompanies() {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('companies')
+        .select('*');
+
+      if (error) {
+        throw error;
+      }
+
+      setCompanies(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
-    async function fetchCompanies() {
+    fetchCompanies();
+  }, []);
+
+  const handleCheckboxChange = (companyId) => {
+    setSelectedCompanyIds(prevSelected => {
+      if (prevSelected.includes(companyId)) {
+        return prevSelected.filter(id => id !== companyId);
+      } else {
+        return [...prevSelected, companyId];
+      }
+    });
+  };
+
+  const handleEditClick = () => {
+    if (selectedCompanyIds.length === 0) {
+      alert('수정할 업체를 선택해주세요.');
+      return;
+    }
+    if (selectedCompanyIds.length > 1) {
+      alert('하나의 업체만 선택하여 수정할 수 있습니다.');
+      return;
+    }
+
+    const selectedCompany = companies.find(comp => comp.id === selectedCompanyIds[0]);
+    if (selectedCompany) {
+      setCompanyToEdit(selectedCompany);
+      setShowForm(true);
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    if (selectedCompanyIds.length === 0) {
+      alert('삭제할 업체를 선택해주세요.');
+      return;
+    }
+
+    if (window.confirm('선택된 업체를 정말 삭제하시겠습니까?')) {
       try {
-        setLoading(true);
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('companies')
-          .select('*');
+          .delete()
+          .in('id', selectedCompanyIds);
 
         if (error) {
           throw error;
         }
 
-        setCompanies(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+        alert('선택된 업체가 성공적으로 삭제되었습니다!');
+        setSelectedCompanyIds([]); // Clear selections
+        fetchCompanies(); // Re-fetch data
+      } catch (error) {
+        alert('오류 발생: ' + error.message);
       }
     }
+  };
 
-    fetchCompanies();
-  }, []);
+  const handleFormCancel = () => {
+    setShowForm(false);
+    setCompanyToEdit(null); // Clear company to edit
+    setSelectedCompanyIds([]); // Clear selections
+    fetchCompanies(); // Re-fetch data to ensure latest state
+  };
 
   const renderTableBody = () => {
     if (loading) {
@@ -68,6 +134,13 @@ export default function CompanyRegistration() {
 
     return companies.map(company => (
       <tr key={company.id}>
+        <td className={styles.checkboxCell}>
+          <input
+            type="checkbox"
+            checked={selectedCompanyIds.includes(company.id)}
+            onChange={() => handleCheckboxChange(company.id)}
+          />
+        </td>
         <td>{company.name}</td>
         <td>{company.country}</td>
         <td>{company.address}</td>
@@ -84,21 +157,27 @@ export default function CompanyRegistration() {
 
   return (
     <div>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            {headers.map(header => <th key={header}>{header}</th>)}
-          </tr>
-        </thead>
-        <tbody>
-          {renderTableBody()}
-        </tbody>
-      </table>
-      <div className={styles.buttonGroup}>
-        <button className={styles.button}>추가</button>
-        <button className={styles.button}>수정</button>
-        <button className={styles.button}>삭제</button>
-      </div>
+      {showForm ? (
+        <CompanyForm onCancel={handleFormCancel} fetchCompanies={fetchCompanies} initialData={companyToEdit} />
+      ) : (
+        <>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                {headers.map(header => <th key={header}>{header}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {renderTableBody()}
+            </tbody>
+          </table>
+          <div className={styles.buttonGroup}>
+            <button className={styles.button} onClick={() => setShowForm(true)}>추가</button>
+            <button className={styles.button} onClick={handleEditClick}>수정</button>
+            <button className={styles.button} onClick={handleDeleteClick}>삭제</button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
