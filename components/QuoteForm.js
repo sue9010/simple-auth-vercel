@@ -134,7 +134,8 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
       remarks: formData.remarks,
       subtotal: subtotal,
       vat_amount: vatAmount,
-      total_amount: totalAmount
+      total_amount: totalAmount,
+      status: '발행'
     };
 
     try {

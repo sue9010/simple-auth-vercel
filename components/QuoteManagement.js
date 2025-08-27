@@ -29,6 +29,7 @@ export default function QuoteManagement() {
     { label: "금액" },
     { label: "통화" },
     { label: "비고" },
+    { label: "상태" },
   ];
 
   useEffect(() => {
@@ -211,6 +212,7 @@ export default function QuoteManagement() {
         </td>
         <td>{quote.currency}</td>
         <td>{quote.remarks}</td>
+        <td>{quote.status}</td>
       </tr>
     ));
   };
