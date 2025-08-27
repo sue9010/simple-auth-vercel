@@ -1,4 +1,15 @@
 /* --- Quote Form Specific Styles --- */
+
+.formCard {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
 .sectionTitle {
   font-size: 1.2rem;
   font-weight: 600;
@@ -15,6 +26,37 @@
   gap: 1rem;
 }
 
+.formField {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.input {
+  flex-grow: 1;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+  background-color: #fff;
+  color: #333;
+}
+
+
+.input:focus {
+  outline: none;
+  border-color: #0070f3;
+  box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.2);
+}
+
 .totalSummary {
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* Three columns for totals */
@@ -28,9 +70,46 @@
 
 .lineItemsContainer .table {
   margin-top: 0;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lineItemsContainer .table th,
+.lineItemsContainer .table td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.lineItemsContainer .table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
 }
 
 .lineItemsContainer .table input {
   width: 100%; /* Ensure inputs fill table cells */
   box-sizing: border-box;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #005bb5;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
 }

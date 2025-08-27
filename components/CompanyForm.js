@@ -3,7 +3,8 @@ import countries from '../data/countries.json'; // Import the country list
 import currencies from '../data/currencies.json'; // Import the currency list
 import shippingMethods from '../data/shipping_methods.json'; // Import the shipping methods list
 import { supabase } from '../lib/supabaseClient';
-import loginStyles from '../styles/Login.module.css';
+import companyFormStyles from '../styles/CompanyForm.module.css';
+import commonStyles from '../styles/Common.module.css';
 import autocompleteStyles from '../styles/Autocomplete.module.css';
 
 export default function CompanyForm({ onCancel, fetchCompanies, initialData }) { // Receive onCancel prop
@@ -165,15 +166,15 @@ export default function CompanyForm({ onCancel, fetchCompanies, initialData }) {
   ];
 
   return (
-    <div className={loginStyles.formCard} style={{ maxWidth: '600px', margin: 'auto' }}>
+    <div className={companyFormStyles.formCard} style={{ maxWidth: '600px', margin: 'auto' }}>
       <h1>{initialData ? '업체 정보 수정' : '신규 업체 등록'}</h1>
-      <form onSubmit={handleSubmit} className={loginStyles.form}>
+      <form onSubmit={handleSubmit} className={companyFormStyles.form}>
         {fields.map(field => (
-          <div key={field.name} className={loginStyles.formField}>
-            <label htmlFor={field.name} className={loginStyles.label}>{field.label}</label>
+          <div key={field.name} className={companyFormStyles.formField}>
+            <label htmlFor={field.name} className={companyFormStyles.label}>{field.label}</label>
             <input
               id={field.name}
-              className={loginStyles.input}
+              className={companyFormStyles.input}
               type="text"
               name={field.name}
               value={formData[field.name]}
@@ -222,9 +223,9 @@ export default function CompanyForm({ onCancel, fetchCompanies, initialData }) {
             )}
           </div>
         ))}
-        <div className={loginStyles.buttonGroup} style={{ justifyContent: 'flex-end' }}>
-          <button type="button" className={loginStyles.button} onClick={onCancel} style={{ backgroundColor: '#6c757d' }} disabled={submitting}>취소</button>
-          <button type="submit" className={loginStyles.button} disabled={submitting}>저장</button>
+        <div className={commonStyles.buttonGroup} style={{ justifyContent: 'flex-end' }}>
+          <button type="button" className={commonStyles.button} onClick={onCancel} style={{ backgroundColor: '#6c757d' }} disabled={submitting}>취소</button>
+          <button type="submit" className={commonStyles.button} disabled={submitting}>저장</button>
         </div>
       </form>
     </div>

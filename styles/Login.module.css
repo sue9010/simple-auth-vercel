@@ -25,10 +25,11 @@
   color: #333;
 }
 
+/* Add gap between input fields and buttons */
 .form {
   display: flex;
   flex-direction: column;
-  /* gap: 1rem; Keep gap for overall spacing */
+  gap: 1rem; /* Adds spacing between children */
 }
 
 .formField {
@@ -64,6 +65,7 @@
   box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.2);
 }
 
+/* Button styles */
 .button {
   width: 100%;
   padding: 12px;
@@ -81,6 +83,7 @@
   background-color: #005bb5;
 }
 
+/* Toggle button styles */
 .toggleButton {
   margin-top: 1rem;
   background: none;
@@ -93,3 +96,6 @@
 .toggleButton:hover {
   text-decoration: underline;
 }
+
+
+

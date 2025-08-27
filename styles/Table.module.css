@@ -52,15 +52,6 @@
   vertical-align: middle;
 }
 
-/* Checkbox styling */
-.checkboxCell {
-  /* No flex on parent td, rely on text-align/vertical-align */
-}
-
-/* .table td.checkboxCell { */
-  /* border: none; Remove border from the cell containing the checkbox */
-/* } */
-
 .checkboxCell input[type="checkbox"],
 .checkboxCell input[type="radio"] {
   width: 16px;
