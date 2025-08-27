@@ -13,5 +13,8 @@
     "next": "15.5.0",
     "react": "19.1.0",
     "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "dotenv": "^17.2.1"
   }
 }

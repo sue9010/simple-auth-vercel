@@ -1,7 +1,11 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import QuotationTemplate from '../../components/QuotationTemplate';
+import dynamic from 'next/dynamic';
+
+const QuotationTemplate = dynamic(() => import('../../components/QuotationTemplate'), {
+  ssr: false,
+});
 import styles from '../../styles/Quotation.module.css';
 
 const QuoteDetailPage = () => {
