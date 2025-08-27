@@ -44,4 +44,11 @@
 - [x] **Quote Form Feature**: Implemented saving new quotes and line items to Supabase.
 - [x] **Quote Management Feature**: Implemented reading and displaying quotes from Supabase.
 - [x] **Quote Management Feature (Update)**: Implemented updating quotes and their line items.
+- [x] **UI Fix (Quote Form)**: Adjusted 'Add Line Item' button size and position.
+- [x] **Quote Management Feature (Delete)**: Implemented deleting quotes and their line items.
+- [x] **UI Fix (Quote Table)**: Changed 'Memo' column to 'Remarks'.
+- [x] **Bug Fix (Quote Form)**: Removed incorrect 'company_id' logic to align with database schema.
+- [x] **Quote Management Feature (Search)**: Added search functionality by company name.
+- [x] **UI Fix (Quote Table)**: Created and applied a dedicated CSS class for the table search bar to fix width issues.
+- [x] **Quote Management Feature (Pagination)**: Added client-side pagination to the quotes table.
 - [x] **Progress Tracking**: Created and updated this `task.md` file.

@@ -10,7 +10,6 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
   const getInitialFormData = () => ({
     date: new Date().toISOString().split('T')[0],
     company_name: '',
-    company_id: null,
     currency: '',
     vat_rate: 0,
     memo: '',
@@ -34,7 +33,6 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
       setFormData({
         date: quoteToEdit.date,
         company_name: quoteToEdit.company_name,
-        company_id: quoteToEdit.company_id,
         currency: quoteToEdit.currency,
         vat_rate: quoteToEdit.vat_rate,
         memo: quoteToEdit.memo || '',
@@ -126,7 +124,6 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
     const quotePayload = {
       date: formData.date,
       company_name: formData.company_name,
-      company_id: formData.company_id,
       currency: formData.currency,
       vat_rate: formData.vat_rate,
       memo: formData.memo,
@@ -217,7 +214,6 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
     setFormData(prevState => ({
       ...prevState,
       company_name: company.name,
-      company_id: company.id,
       currency: company.currency || '',
       memo: company.memo || '',
       vat_rate: vatRate
@@ -318,13 +314,15 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
                 <td><input type="number" name="unit_price" value={item.unit_price} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
                 <td><input type="text" name="amount" value={(item.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly className={styles.input} style={{ backgroundColor: '#e9ecef' }} /></td>
                 <td>
-                  <button type="button" onClick={() => handleRemoveLineItem(index)} className={styles.button} style={{ backgroundColor: '#dc3545' }} disabled={submitting || lineItems.length === 1}>삭제</button>
+                  <button type="button" onClick={() => handleRemoveLineItem(index)} className={styles.button} style={{ backgroundColor: '#dc3545' }} disabled={submitting || lineItems.length === 1}>-</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <button type="button" onClick={handleAddLineItem} className={styles.button} style={{ marginTop: '1rem' }} disabled={submitting}>품목 추가</button>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <button type="button" onClick={handleAddLineItem} className={styles.button} style={{ marginTop: '1rem', width: 'auto' }} disabled={submitting}>품목 추가</button>
+        </div>
 
         <div className={styles.sectionTitle} style={{ marginTop: '2rem' }}>총 금액</div>
         <div className={styles.totalSummary}>
