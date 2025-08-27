@@ -243,6 +243,17 @@
   background-color: #005bb5;
 }
 
+
+.buttonGroup {
+  margin-top: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Make buttons in group smaller than the main login button */
+
+
+
 /* Print-specific styles */
 @media print {
   .quotationPage {

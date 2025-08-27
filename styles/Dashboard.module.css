@@ -1,110 +1,116 @@
-/* --- Dashboard Styles --- */
 
-.dashboardContainer {
+.dashboard {
+  padding: 2rem;
+  background-color: #f4f7fa;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  color: #333;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
   display: flex;
-  width: 100vw;
-  min-height: 100vh;
-  background-color: #f8f9fa;
+  align-items: center;
 }
 
-.navBar {
-  display: flex;
-  flex-direction: column;
-  width: 240px;
-  background-color: #ffffff;
-  border-right: 1px solid #dee2e6;
-  padding: 1rem;
-}
-
-.navLinks {
-  display: flex;
-  flex-direction: column;
-}
-
-.navLink {
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.5rem;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 500;
-  color: #495057;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.navLink:hover {
-  background-color: #f1f3f5;
-}
-
-.navLinkActive {
-  background-color: #0070f3;
+.statIcon {
+  font-size: 2.5rem;
+  margin-right: 1rem;
+  padding: 0.5rem;
+  border-radius: 50%;
   color: #fff;
 }
 
-.navSubMenu {
-  padding-left: 1rem; /* Indent sub-menu items */
-  margin-top: 0.25rem;
-  margin-bottom: 0.5rem;
+.statInfo h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #666;
+}
+
+.statInfo p {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+.chartContainer, .activityFeed {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.chartContainer h2, .activityFeed h2 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.chartPlaceholder {
+  height: 300px;
   display: flex;
-  flex-direction: column;
-}
-
-.navSubLink {
-  padding: 0.5rem 1rem;
-  margin-bottom: 0.25rem;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 400;
-  font-size: 0.9rem;
-  color: #6c757d;
-  transition: background-color 0.2s, color 0.2s;
-}
-
-.navSubLink:hover {
-  background-color: #e9ecef;
-  color: #495057;
-}
-
-.navSubLink.navLinkActive {
-  color: #fff; /* Ensure white text for active sub-links */
-}
-
-.navSpacer {
-  flex-grow: 1; /* Pushes user info to the bottom */
-}
-
-.userInfo {
-  border-top: 1px solid #dee2e6;
-  padding-top: 1rem;
-  text-align: center;
-}
-
-.userInfo p {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-.logoutButton {
-  width: 100%;
-  padding: 10px;
-  background-color: #e9ecef;
-  color: #495057;
-  border: none;
+  align-items: center;
+  justify-content: center;
+  background-color: #f0f0f0;
+  color: #999;
   border-radius: 4px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.logoutButton:hover {
-  background-color: #ced4da;
+.activityList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.mainContent {
-  flex-grow: 1;
-  padding: 2rem;
+.activityItem {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #eee;
 }
 
-.mainContent h1 {
-  color: #343a40;
+.activityItem:last-child {
+  border-bottom: none;
+}
+
+.activityIcon {
+  margin-right: 1rem;
+  font-size: 1.5rem;
+  color: #999;
+}
+
+.activityText strong {
+  color: #333;
+}
+
+.activityText span {
+  color: #777;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
 }

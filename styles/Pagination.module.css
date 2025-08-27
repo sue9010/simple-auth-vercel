@@ -35,3 +35,32 @@
   color: white;
   border-color: #0070f3;
 }
+
+.buttonGroup {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.buttonGroup .button {
+  width: auto;
+  padding: 8px 16px;
+  font-size: 14px;
+  justify-content: space-between;
+}
+
+.button {
+  width: 100%;
+  padding: 12px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #005bb5;
+}
