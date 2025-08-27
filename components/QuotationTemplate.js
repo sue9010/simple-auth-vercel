@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from '../styles/Quotation.module.css';
 
 // Placeholder for company info - replace with actual data later
@@ -34,9 +33,9 @@ const labels = {
     subtotal: '공급가액',
     vat: '부가세',
     total: '합계',
-    thankYou: '이용해 주셔서 감사합니다.',
-    print: '인쇄',
+    backToList: '목록으로 돌아가기',
     download: '다운로드',
+    print: '인쇄',
   },
   en: {
     quotation: 'QUOTATION',
@@ -45,19 +44,19 @@ const labels = {
     to: 'To',
     item: 'Item',
     description: 'Description',
-    quantity: 'Q'ty',
+    quantity: 'Qty',
     unitPrice: 'Unit Price',
     amount: 'Amount',
     subtotal: 'Subtotal',
     vat: 'VAT',
     total: 'Total Amount',
-    thankYou: 'Thank you for your business.',
     print: 'Print',
     download: 'Download',
+    backToList: 'Back to List',
   },
 };
 
-const QuotationTemplate = ({ quoteData, language = 'kr' }) => {
+const QuotationTemplate = ({ quoteData, language = 'kr', router, setLanguage }) => {
   const l = labels[language];
   const company = myCompanyInfo[language];
 
@@ -77,6 +76,9 @@ const QuotationTemplate = ({ quoteData, language = 'kr' }) => {
   return (
     <>
       <div className={styles.controls}>
+        <button onClick={() => router.back()}>{l.backToList}</button>
+        <button onClick={() => setLanguage('kr')} disabled={language === 'kr'}>한국어</button>
+        <button onClick={() => setLanguage('en')} disabled={language === 'en'}>English</button>
         <button onClick={handlePrint}>{l.print}</button>
         <button onClick={handleDownload}>{l.download}</button>
       </div>
@@ -90,7 +92,6 @@ const QuotationTemplate = ({ quoteData, language = 'kr' }) => {
           </div>
           <div className={styles.quoteDetails}>
             <h2>{l.quotation}</h2>
-            <p>{l.quoteNo}: {quoteData.id}</p>
             <p>{l.date}: {quoteData.date}</p>
           </div>
         </header>
@@ -99,7 +100,7 @@ const QuotationTemplate = ({ quoteData, language = 'kr' }) => {
           <h3>{l.to}: {quoteData.company_name}</h3>
         </section>
 
-        <section>
+        <section style={{ flexGrow: 1 }}>
           <table className={styles.itemsTable}>
             <thead>
               <tr>
@@ -142,10 +143,6 @@ const QuotationTemplate = ({ quoteData, language = 'kr' }) => {
             </tbody>
           </table>
         </section>
-
-        <footer className={styles.footer}>
-          <p>{l.thankYou}</p>
-        </footer>
       </div>
     </>
   );

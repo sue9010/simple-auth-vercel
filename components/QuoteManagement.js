@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { supabase } from '../lib/supabaseClient';
 import styles from '../styles/Home.module.css';
 import QuoteForm from './QuoteForm';
 
 export default function QuoteManagement() {
+  const router = useRouter();
   const [quotes, setQuotes] = useState([]);
   const [filteredQuotes, setFilteredQuotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,23 +15,21 @@ export default function QuoteManagement() {
   const [error, setError] = useState(null);
   const [quoteToEdit, setQuoteToEdit] = useState(null);
   
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
   const headers = [
-    '', // Checkbox column header
+    '', 
     '날짜', '업체명', '금액', '통화', '비고'
   ];
 
-  // Effect for filtering quotes based on search term
   useEffect(() => {
     const lowercasedSearchTerm = searchTerm.toLowerCase();
     const results = quotes.filter(quote =>
       quote.company_name.toLowerCase().includes(lowercasedSearchTerm)
     );
     setFilteredQuotes(results);
-    setCurrentPage(1); // Reset to first page on new search
+    setCurrentPage(1); 
   }, [searchTerm, quotes]);
 
   const handleCheckboxChange = (quoteId) => {
@@ -56,9 +56,7 @@ export default function QuoteManagement() {
         .select('*, quote_line_items(*)')
         .order('created_at', { ascending: false });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
       setQuotes(data);
     } catch (err) {
       console.error('Error fetching quotes:', err.message);
@@ -98,24 +96,11 @@ export default function QuoteManagement() {
 
     if (window.confirm(`선택된 ${selectedQuoteIds.length}개의 견적을 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`)) {
       try {
-        const { error: itemsError } = await supabase
-          .from('quote_line_items')
-          .delete()
-          .in('quote_id', selectedQuoteIds);
-
-        if (itemsError) throw itemsError;
-
-        const { error: quotesError } = await supabase
-          .from('quotes')
-          .delete()
-          .in('id', selectedQuoteIds);
-
-        if (quotesError) throw quotesError;
-
+        await supabase.from('quote_line_items').delete().in('quote_id', selectedQuoteIds);
+        await supabase.from('quotes').delete().in('id', selectedQuoteIds);
         alert(`${selectedQuoteIds.length}개의 견적이 성공적으로 삭제되었습니다.`);
         setSelectedQuoteIds([]);
         fetchQuotes();
-
       } catch (error) {
         console.error('Error deleting quotes:', error.message);
         alert(`삭제 중 오류가 발생했습니다: ${error.message}`);
@@ -123,7 +108,15 @@ export default function QuoteManagement() {
     }
   };
 
-  // Pagination Logic
+  const handleViewQuotation = () => {
+    if (selectedQuoteIds.length !== 1) {
+      alert('견적서를 볼 항목을 하나만 선택해주세요.');
+      return;
+    }
+    const quoteId = selectedQuoteIds[0];
+    router.push(`/quotes/${quoteId}`);
+  };
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredQuotes.slice(indexOfFirstItem, indexOfLastItem);
@@ -202,6 +195,7 @@ export default function QuoteManagement() {
               <button className={styles.button} onClick={handleAdd}>추가</button>
               <button className={styles.button} onClick={handleEdit}>수정</button>
               <button className={styles.button} onClick={handleDelete}>삭제</button>
+              <button className={styles.button} onClick={handleViewQuotation} disabled={selectedQuoteIds.length !== 1}>견적서</button>
             </div>
             {renderPagination()}
           </div>

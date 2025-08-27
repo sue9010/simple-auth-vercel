@@ -51,4 +51,11 @@
 - [x] **Quote Management Feature (Search)**: Added search functionality by company name.
 - [x] **UI Fix (Quote Table)**: Created and applied a dedicated CSS class for the table search bar to fix width issues.
 - [x] **Quote Management Feature (Pagination)**: Added client-side pagination to the quotes table.
+- [x] **Quote Management Feature (View)**: Created a printable quotation template page and linked it from the main table.
+- [x] **Bug Fix (Quotation Template)**: Fixed CSS module syntax error by moving global print styles to globals.css.
+- [x] **UI Improvement (Quotation View)**: Consolidated control buttons and language selection into QuotationTemplate component.
+- [x] **UI Improvement (Quotation Template)**: Unified height of control buttons to 38px.
+- [x] **UI Improvement (Quotation Template)**: Fixed vertical alignment of control buttons.
+- [x] **UI Improvement (Quotation Template)**: Fixed vertical alignment of text within control buttons.
+- [x] **UI Improvement (Quotation Template)**: Removed footer and ensured totals table sticks to bottom of page.
 - [x] **Progress Tracking**: Created and updated this `task.md` file.

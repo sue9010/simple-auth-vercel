@@ -109,13 +109,123 @@
   font-size: 0.9rem;
 }
 
+.quotationPage {
+  background: #fff;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  font-family: 'Malgun Gothic', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 4rem); /* Adjust based on margin/padding */
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 4px solid #333;
+}
+
+.companyInfo h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+}
+
+.companyInfo p {
+  margin: 0.25rem 0;
+  color: #555;
+}
+
+.quoteDetails {
+  text-align: right;
+}
+
+.quoteDetails h2 {
+  margin: 0;
+  font-size: 2.5rem;
+  color: #0070f3;
+}
+
+.quoteDetails p {
+  margin: 0.25rem 0;
+  font-weight: bold;
+}
+
+.customerInfo {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.customerInfo h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.itemsTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+}
+
+.itemsTable th, .itemsTable td {
+  border: 1px solid #dee2e6;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.itemsTable th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.itemsTable .text-right {
+  text-align: right;
+}
+
+.totals {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto; /* Pushes totals to the bottom */
+}
+
+.totalsTable {
+  width: 50%;
+  border-collapse: collapse;
+}
+
+.totalsTable td {
+  padding: 0.75rem;
+  border: 1px solid #dee2e6;
+}
+
+.totalsTable .label {
+  font-weight: 600;
+  background-color: #f8f9fa;
+}
+
+.totalsTable .value {
+  text-align: right;
+}
+
 .controls {
   text-align: center;
   margin-top: 2rem;
   margin-bottom: 2rem; /* Add space below for when printing */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .controls button {
+  height: 38px; /* Added height */
   padding: 10px 20px;
   margin: 0 10px;
   border: none;
@@ -124,6 +234,9 @@
   color: white;
   font-size: 16px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .controls button:hover {
@@ -132,7 +245,7 @@
 
 /* Print-specific styles */
 @media print {
-  body, .quotationPage {
+  .quotationPage {
     margin: 0;
     padding: 0;
     box-shadow: none;
@@ -141,3 +254,4 @@
     display: none;
   }
 }
+
