@@ -29,7 +29,7 @@ export default function QuoteManagement() {
     { label: "금액" },
     { label: "통화" },
     { label: "비고" },
-    { label: "상태" },
+    { label: "상태", className: tableStyles.statusCol },
   ];
 
   useEffect(() => {
@@ -75,6 +75,26 @@ export default function QuoteManagement() {
     setShowForm(false);
     setQuoteToEdit(null);
     fetchQuotes();
+  };
+
+  const handleStatusChange = async (quoteId, newStatus) => {
+    try {
+      const { error } = await supabase
+        .from("quotes")
+        .update({ status: newStatus })
+        .eq("id", quoteId);
+
+      if (error) throw error;
+
+      setQuotes((prevQuotes) =>
+        prevQuotes.map((q) =>
+          q.id === quoteId ? { ...q, status: newStatus } : q
+        )
+      );
+    } catch (error) {
+      console.error("Error updating status:", error.message);
+      alert(`상태 업데이트 중 오류가 발생했습니다: ${error.message}`);
+    }
   };
 
   const fetchQuotes = async () => {
@@ -212,7 +232,28 @@ export default function QuoteManagement() {
         </td>
         <td>{quote.currency}</td>
         <td>{quote.remarks}</td>
-        <td>{quote.status}</td>
+        <td>
+          <select
+            value={quote.status || ""}
+            onChange={(e) => handleStatusChange(quote.id, e.target.value)}
+            style={{
+              padding: "5px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              backgroundColor: "white",
+              color: "black",
+            }}
+          >
+            {!quote.status && (
+              <option value="" disabled>
+                선택
+              </option>
+            )}
+            <option value="발행">발행</option>
+            <option value="주문">주문</option>
+            <option value="캔슬">취소</option>
+          </select>
+        </td>
       </tr>
     ));
   };
