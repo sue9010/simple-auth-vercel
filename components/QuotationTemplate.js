@@ -1,3 +1,5 @@
+import html2pdf from 'html2pdf.js';
+import { useRef } from 'react';
 import styles from '../styles/Quotation.module.css';
 
 // Placeholder for company info - replace with actual data later
@@ -59,6 +61,7 @@ const labels = {
 const QuotationTemplate = ({ quoteData, language = 'kr', router, setLanguage }) => {
   const l = labels[language];
   const company = myCompanyInfo[language];
+  const quotationRef = useRef(null);
 
   if (!quoteData) {
     return <div>Loading...</div>;
@@ -69,8 +72,23 @@ const QuotationTemplate = ({ quoteData, language = 'kr', router, setLanguage }) 
   };
 
   const handleDownload = () => {
-    alert('다운로드 기능은 아직 구현되지 않았습니다.');
-    // TODO: Implement PDF download functionality using a library like html2pdf.js
+    const element = quotationRef.current;
+    if (element) {
+      // Add this date formatting logic
+      const [year, month, day] = quoteData.date.split('-');
+      const formattedDate = `${year.substring(2)}${month}${day}`;
+
+      const opt = {
+        margin:       [10, 10, 10, 10], // top, left, bottom, right
+        filename:     `Quotation_${quoteData.company_name}_${formattedDate}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, logging: true, dpi: 192, letterRendering: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    } else {
+      alert('PDF를 생성할 내용을 찾을 수 없습니다.');
+    }
   };
 
   return (
@@ -82,7 +100,7 @@ const QuotationTemplate = ({ quoteData, language = 'kr', router, setLanguage }) 
         <button onClick={handlePrint}>{l.print}</button>
         <button onClick={handleDownload}>{l.download}</button>
       </div>
-      <div className={styles.quotationPage}>
+      <div className={styles.quotationPage} ref={quotationRef}>
         <header className={styles.header}>
           <div className={styles.companyInfo}>
             <h1>{company.name}</h1>
@@ -92,6 +110,7 @@ const QuotationTemplate = ({ quoteData, language = 'kr', router, setLanguage }) 
           </div>
           <div className={styles.quoteDetails}>
             <h2>{l.quotation}</h2>
+            <p>{l.quoteNo}: {quoteData.quotation_id}</p>
             <p>{l.date}: {quoteData.date}</p>
           </div>
         </header>

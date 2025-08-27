@@ -10,6 +10,7 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
   const getInitialFormData = () => ({
     date: new Date().toISOString().split('T')[0],
     company_name: '',
+    quotation_id: '', // Added
     currency: '',
     vat_rate: 0,
     memo: '',
@@ -171,9 +172,15 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
 
       } else {
         // Insert logic (Existing functionality)
+        const newQuotePayload = {
+          ...quotePayload,
+          quotation_id: formData.quotation_id, // Use generated ID from state
+        };
+
+        // Insert logic (Existing functionality)
         const { data: quoteData, error: quoteError } = await supabase
           .from('quotes')
-          .insert([quotePayload])
+          .insert([newQuotePayload]) // Use newQuotePayload
           .select();
 
         if (quoteError) throw quoteError;
@@ -235,6 +242,22 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
             <label htmlFor="date" className={styles.label}>날짜</label>
             <input id="date" className={styles.input} type="date" name="date" value={formData.date} onChange={handleMainFormChange} disabled={submitting || isEditMode} />
           </div>
+          {/* New quotation_id field */}
+          {isEditMode ? (
+            <div className={styles.formField}>
+              <label htmlFor="quotation_id" className={styles.label}>견적번호</label>
+              <input
+                id="quotation_id"
+                className={styles.input}
+                type="text"
+                name="quotation_id"
+                value={quoteToEdit.quotation_id}
+                readOnly
+                disabled={true}
+                style={{ backgroundColor: '#e9ecef', cursor: 'not-allowed' }}
+              />
+            </div>
+          ) : null}
           <div className={styles.formField}>
             <label htmlFor="company_name" className={styles.label}>업체명</label>
             <button

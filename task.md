@@ -58,4 +58,10 @@
 - [x] **UI Improvement (Quotation Template)**: Fixed vertical alignment of control buttons.
 - [x] **UI Improvement (Quotation Template)**: Fixed vertical alignment of text within control buttons.
 - [x] **UI Improvement (Quotation Template)**: Removed footer and ensured totals table sticks to bottom of page.
+- [x] **Quote Management Feature (Download)**: Implemented PDF download functionality for quotation template.
+- [x] **Quote Management Feature (Download)**: Changed PDF filename format to include company name and formatted date.
+- [x] **Bug Fix (Quotation Template)**: Defined 'formattedDate' variable in handleDownload function.
+- [x] **Quote Form Feature**: Removed client-side 'quotation_id' generation logic.
+- [x] **Quote Form UI**: 'quotation_id' field now only displayed in edit mode (not for new quotes).
+- [x] **Supabase Feature**: Implemented server-side sequential 'quotation_id' generation in Supabase (Q-YYMMDD-XXX format).
 - [x] **Progress Tracking**: Created and updated this `task.md` file.
