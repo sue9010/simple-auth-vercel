@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import currencies from '../data/currencies.json';
 import { supabase } from '../lib/supabaseClient';
-import styles from '../styles/Home.module.css';
+import autocompleteStyles from '../styles/Autocomplete.module.css';
+import loginStyles from '../styles/Login.module.css';
+import quoteFormStyles from '../styles/QuoteForm.module.css';
+import tableStyles from '../styles/Table.module.css';
 import CompanySelectionModal from './CompanySelectionModal';
 
 export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
@@ -233,22 +236,22 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
   const totalAmount = subtotal + vatAmount;
 
   return (
-    <div className={styles.formCard} style={{ maxWidth: '1600px', margin: 'auto' }}>
+    <div className={loginStyles.formCard} style={{ maxWidth: '1600px', margin: 'auto' }}>
       <h1>{isEditMode ? '견적 정보 수정' : '신규 견적 등록'}</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.sectionTitle}>기본 정보</div>
-        <div className={styles.formGrid}>
-          <div className={styles.formField}>
-            <label htmlFor="date" className={styles.label}>날짜</label>
-            <input id="date" className={styles.input} type="date" name="date" value={formData.date} onChange={handleMainFormChange} disabled={submitting || isEditMode} />
+      <form onSubmit={handleSubmit} className={loginStyles.form}>
+        <div className={quoteFormStyles.sectionTitle}>기본 정보</div>
+        <div className={quoteFormStyles.formGrid}>
+          <div className={loginStyles.formField}>
+            <label htmlFor="date" className={loginStyles.label}>날짜</label>
+            <input id="date" className={loginStyles.input} type="date" name="date" value={formData.date} onChange={handleMainFormChange} disabled={submitting || isEditMode} />
           </div>
           {/* New quotation_id field */}
           {isEditMode ? (
-            <div className={styles.formField}>
-              <label htmlFor="quotation_id" className={styles.label}>견적번호</label>
+            <div className={loginStyles.formField}>
+              <label htmlFor="quotation_id" className={loginStyles.label}>견적번호</label>
               <input
                 id="quotation_id"
-                className={styles.input}
+                className={loginStyles.input}
                 type="text"
                 name="quotation_id"
                 value={quoteToEdit.quotation_id}
@@ -258,12 +261,12 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
               />
             </div>
           ) : null}
-          <div className={styles.formField}>
-            <label htmlFor="company_name" className={styles.label}>업체명</label>
+          <div className={loginStyles.formField}>
+            <label htmlFor="company_name" className={loginStyles.label}>업체명</label>
             <button
               type="button"
               id="company_name"
-              className={styles.input}
+              className={loginStyles.input}
               onClick={() => !isEditMode && setShowCompanyModal(true)}
               disabled={submitting || isEditMode}
               style={{ textAlign: 'left', color: 'black', backgroundColor: isEditMode ? '#e9ecef' : 'white', cursor: isEditMode ? 'not-allowed' : 'pointer' }}
@@ -271,11 +274,11 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
               {formData.company_name || '업체를 선택하세요'}
             </button>
           </div>
-          <div className={styles.formField}>
-            <label htmlFor="currency" className={styles.label}>통화</label>
+          <div className={loginStyles.formField}>
+            <label htmlFor="currency" className={loginStyles.label}>통화</label>
             <input
               id="currency"
-              className={styles.input}
+              className={loginStyles.input}
               type="text"
               name="currency"
               value={formData.currency}
@@ -286,11 +289,11 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
               onKeyDown={handleKeyDown}
             />
             {showCurrencySuggestions && currencySuggestions.length > 0 && (
-              <ul className={styles.autocompleteDropdown}>
+              <ul className={autocompleteStyles.autocompleteDropdown}>
                 {currencySuggestions.map((suggestion, index) => (
                   <li
                     key={suggestion}
-                    className={`${styles.autocompleteItem} ${index === activeSuggestionIndex ? styles.autocompleteItemActive : ''}`}
+                    className={`${autocompleteStyles.autocompleteItem} ${index === activeSuggestionIndex ? autocompleteStyles.autocompleteItemActive : ''}`}
                     onClick={() => handleSelectSuggestion(suggestion)}
                     onMouseEnter={() => setActiveSuggestionIndex(index)}
                   >
@@ -300,22 +303,22 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
               </ul>
             )}
           </div>
-          <div className={styles.formField}>
-            <label htmlFor="vat_rate" className={styles.label}>부가세율 (%)</label>
-            <input id="vat_rate" className={styles.input} type="number" name="vat_rate" value={formData.vat_rate} onChange={handleMainFormChange} disabled={submitting} />
+          <div className={loginStyles.formField}>
+            <label htmlFor="vat_rate" className={loginStyles.label}>부가세율 (%)</label>
+            <input id="vat_rate" className={loginStyles.input} type="number" name="vat_rate" value={formData.vat_rate} onChange={handleMainFormChange} disabled={submitting} />
           </div>
-          <div className={styles.formField}>
-            <label htmlFor="memo" className={styles.label}>메모</label>
-            <input id="memo" className={styles.input} type="text" name="memo" value={formData.memo} onChange={handleMainFormChange} disabled={submitting} />
+          <div className={loginStyles.formField}>
+            <label htmlFor="memo" className={loginStyles.label}>메모</label>
+            <input id="memo" className={loginStyles.input} type="text" name="memo" value={formData.memo} onChange={handleMainFormChange} disabled={submitting} />
           </div>
-          <div className={styles.formField}>
-            <label htmlFor="remarks" className={styles.label}>비고</label>
-            <input id="remarks" className={styles.input} type="text" name="remarks" value={formData.remarks} onChange={handleMainFormChange} disabled={submitting} />
+          <div className={loginStyles.formField}>
+            <label htmlFor="remarks" className={loginStyles.label}>비고</label>
+            <input id="remarks" className={loginStyles.input} type="text" name="remarks" value={formData.remarks} onChange={handleMainFormChange} disabled={submitting} />
           </div>
         </div>
 
-        <div className={styles.sectionTitle} style={{ marginTop: '2rem' }}>품목 정보</div>
-        <table className={styles.table} style={{ width: '100%' }}>
+        <div className={quoteFormStyles.sectionTitle} style={{ marginTop: '2rem' }}>품목 정보</div>
+        <table className={tableStyles.table} style={{ width: '100%' }}>
           <thead>
             <tr>
               <th>품목명</th>
@@ -330,42 +333,42 @@ export default function QuoteForm({ onCancel, fetchQuotes, quoteToEdit }) {
           <tbody>
             {lineItems.map((item, index) => (
               <tr key={index}>
-                <td><input type="text" name="item_name" value={item.item_name} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
-                <td><input type="text" name="model_name" value={item.model_name} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
-                <td><input type="text" name="description" value={item.description} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
-                <td><input type="number" name="quantity" value={item.quantity} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
-                <td><input type="number" name="unit_price" value={item.unit_price} onChange={e => handleLineItemChange(index, e)} className={styles.input} disabled={submitting} /></td>
-                <td><input type="text" name="amount" value={(item.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly className={styles.input} style={{ backgroundColor: '#e9ecef' }} /></td>
+                <td><input type="text" name="item_name" value={item.item_name} onChange={e => handleLineItemChange(index, e)} className={loginStyles.input} disabled={submitting} /></td>
+                <td><input type="text" name="model_name" value={item.model_name} onChange={e => handleLineItemChange(index, e)} className={loginStyles.input} disabled={submitting} /></td>
+                <td><input type="text" name="description" value={item.description} onChange={e => handleLineItemChange(index, e)} className={loginStyles.input} disabled={submitting} /></td>
+                <td><input type="number" name="quantity" value={item.quantity} onChange={e => handleLineItemChange(index, e)} className={loginStyles.input} disabled={submitting} /></td>
+                <td><input type="number" name="unit_price" value={item.unit_price} onChange={e => handleLineItemChange(index, e)} className={loginStyles.input} disabled={submitting} /></td>
+                <td><input type="text" name="amount" value={(item.amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly className={loginStyles.input} style={{ backgroundColor: '#e9ecef' }} /></td>
                 <td>
-                  <button type="button" onClick={() => handleRemoveLineItem(index)} className={styles.button} style={{ backgroundColor: '#dc3545' }} disabled={submitting || lineItems.length === 1}>-</button>
+                  <button type="button" onClick={() => handleRemoveLineItem(index)} className={loginStyles.button} style={{ backgroundColor: '#dc3545' }} disabled={submitting || lineItems.length === 1}>-</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <button type="button" onClick={handleAddLineItem} className={styles.button} style={{ marginTop: '1rem', width: 'auto' }} disabled={submitting}>품목 추가</button>
+          <button type="button" onClick={handleAddLineItem} className={loginStyles.button} style={{ marginTop: '1rem', width: 'auto' }} disabled={submitting}>품목 추가</button>
         </div>
 
-        <div className={styles.sectionTitle} style={{ marginTop: '2rem' }}>총 금액</div>
-        <div className={styles.totalSummary}>
-          <div className={styles.formField}>
-            <label className={styles.label}>공급가</label>
-            <input className={styles.input} type="text" value={subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly style={{ backgroundColor: '#e9ecef' }} />
+        <div className={quoteFormStyles.sectionTitle} style={{ marginTop: '2rem' }}>총 금액</div>
+        <div className={quoteFormStyles.totalSummary}>
+          <div className={loginStyles.formField}>
+            <label className={loginStyles.label}>공급가</label>
+            <input className={loginStyles.input} type="text" value={subtotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly style={{ backgroundColor: '#e9ecef' }} />
           </div>
-          <div className={styles.formField}>
-            <label className={styles.label}>VAT</label>
-            <input className={styles.input} type="text" value={vatAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly style={{ backgroundColor: '#e9ecef' }} />
+          <div className={loginStyles.formField}>
+            <label className={loginStyles.label}>VAT</label>
+            <input className={loginStyles.input} type="text" value={vatAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly style={{ backgroundColor: '#e9ecef' }} />
           </div>
-          <div className={styles.formField}>
-            <label className={styles.label}>합계</label>
-            <input className={styles.input} type="text" value={totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly style={{ backgroundColor: '#e9ecef' }} />
+          <div className={loginStyles.formField}>
+            <label className={loginStyles.label}>합계</label>
+            <input className={loginStyles.input} type="text" value={totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} readOnly style={{ backgroundColor: '#e9ecef' }} />
           </div>
         </div>
 
-        <div className={styles.buttonGroup} style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
-          <button type="button" className={styles.button} onClick={onCancel} style={{ backgroundColor: '#6c757d' }} disabled={submitting}>취소</button>
-          <button type="submit" className={styles.button} disabled={submitting}>
+        <div className={loginStyles.buttonGroup} style={{ justifyContent: 'flex-end', marginTop: '2rem' }}>
+          <button type="button" className={loginStyles.button} onClick={onCancel} style={{ backgroundColor: '#6c757d' }} disabled={submitting}>취소</button>
+          <button type="submit" className={loginStyles.button} disabled={submitting}>
             {isEditMode ? '수정' : '저장'}
           </button>
         </div>

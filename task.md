@@ -64,4 +64,4 @@
 - [x] **Quote Form Feature**: Removed client-side 'quotation_id' generation logic.
 - [x] **Quote Form UI**: 'quotation_id' field now only displayed in edit mode (not for new quotes).
 - [x] **Supabase Feature**: Implemented server-side sequential 'quotation_id' generation in Supabase (Q-YYMMDD-XXX format).
-- [x] **Progress Tracking**: Created and updated this `task.md` file.
+- [x] **CSS Refactoring**: Added general button styles to `styles/Common.module.css`.

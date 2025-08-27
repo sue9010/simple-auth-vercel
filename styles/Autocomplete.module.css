@@ -1,0 +1,33 @@
+/* Autocomplete styles */
+.autocompleteDropdown {
+  position: absolute;
+  top: 100%; /* Position below the input */
+  left: 120px; /* Align with input start, considering label width */
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000; /* Ensure it's above other content */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.autocompleteItem {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  color: #333; /* Set text color to black */
+}
+
+.autocompleteItem:hover {
+  background-color: #f0f0f0;
+}
+
+.autocompleteItemActive {
+  background-color: #0070f3;
+  color: white;
+}

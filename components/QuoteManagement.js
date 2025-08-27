@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { supabase } from '../lib/supabaseClient';
-import styles from '../styles/Home.module.css';
+import tableStyles from '../styles/Table.module.css';
+import paginationStyles from '../styles/Pagination.module.css';
+import commonStyles from '../styles/Common.module.css';
 import QuoteForm from './QuoteForm';
 
 export default function QuoteManagement() {
@@ -14,13 +16,18 @@ export default function QuoteManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [quoteToEdit, setQuoteToEdit] = useState(null);
-  
+  const [allSelected, setAllSelected] = useState(false); // New state for select all
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
   const headers = [
-    '', 
-    '날짜', '업체명', '금액', '통화', '비고'
+    { label: '', className: tableStyles.checkboxCol }, 
+    { label: '날짜', className: tableStyles.dateCol }, 
+    { label: '업체명' }, 
+    { label: '금액' }, 
+    { label: '통화' }, 
+    { label: '비고' }
   ];
 
   useEffect(() => {
@@ -32,13 +39,30 @@ export default function QuoteManagement() {
     setCurrentPage(1); 
   }, [searchTerm, quotes]);
 
+  // New handleSelectAll function
+  const handleSelectAll = () => {
+    const newAllSelected = !allSelected;
+    setAllSelected(newAllSelected);
+    if (newAllSelected) {
+      setSelectedQuoteIds(currentItems.map(quote => quote.id));
+    } else {
+      setSelectedQuoteIds([]);
+    }
+  };
+
   const handleCheckboxChange = (quoteId) => {
     setSelectedQuoteIds(prevSelected => {
-      if (prevSelected.includes(quoteId)) {
-        return prevSelected.filter(id => id !== quoteId);
+      const newSelected = prevSelected.includes(quoteId)
+        ? prevSelected.filter(id => id !== quoteId)
+        : [...prevSelected, quoteId];
+
+      // Update allSelected state based on the new selection
+      if (newSelected.length === currentItems.length && currentItems.length > 0) {
+        setAllSelected(true);
       } else {
-        return [...prevSelected, quoteId];
+        setAllSelected(false);
       }
+      return newSelected;
     });
   };
 
@@ -123,14 +147,14 @@ export default function QuoteManagement() {
   const pageCount = Math.ceil(filteredQuotes.length / itemsPerPage);
 
   const renderTableBody = () => {
-    if (loading) return <tr><td colSpan={headers.length} className={styles.tableMessage}>견적 정보를 불러오는 중...</td></tr>;
-    if (error) return <tr><td colSpan={headers.length} className={`${styles.tableMessage} ${styles.error}`}>견적 정보를 불러오는데 오류가 발생했습니다: {error}</td></tr>;
-    if (currentItems.length === 0) return <tr><td colSpan={headers.length} className={styles.tableMessage}>{searchTerm ? '검색 결과가 없습니다.' : '견적 정보가 없습니다.'}</td></tr>;
+    if (loading) return <tr><td colSpan={headers.length} className={commonStyles.tableMessage}>견적 정보를 불러오는 중...</td></tr>;
+    if (error) return <tr><td colSpan={headers.length} className={`${commonStyles.tableMessage} ${commonStyles.error}`}>견적 정보를 불러오는데 오류가 발생했습니다: {error}</td></tr>;
+    if (currentItems.length === 0) return <tr><td colSpan={headers.length} className={commonStyles.tableMessage}>{searchTerm ? '검색 결과가 없습니다.' : '견적 정보가 없습니다.'}</td></tr>;
 
     return currentItems.map(quote => (
       <tr key={quote.id}>
-        <td className={styles.checkboxCell}><input type="checkbox" checked={selectedQuoteIds.includes(quote.id)} onChange={() => handleCheckboxChange(quote.id)} /></td>
-        <td>{quote.date}</td>
+        <td className={`${tableStyles.checkboxCell} ${tableStyles.checkboxCol}`}><input type="checkbox" checked={selectedQuoteIds.includes(quote.id)} onChange={() => handleCheckboxChange(quote.id)} /></td>
+        <td className={tableStyles.dateCol}>{quote.date}</td>
         <td>{quote.company_name}</td>
         <td>{quote.total_amount != null ? quote.total_amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}</td>
         <td>{quote.currency}</td>
@@ -147,11 +171,11 @@ export default function QuoteManagement() {
     }
 
     return (
-      <div className={styles.pagination}>
+      <div className={paginationStyles.pagination}>
         <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>&lt;&lt;</button>
         <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>&lt;</button>
         {pageNumbers.map(number => (
-          <button key={number} onClick={() => setCurrentPage(number)} className={currentPage === number ? styles.activePage : ''}>
+          <button key={number} onClick={() => setCurrentPage(number)} className={currentPage === number ? paginationStyles.activePage : ''}>
             {number}
           </button>
         ))}
@@ -177,25 +201,32 @@ export default function QuoteManagement() {
               placeholder="업체명으로 검색..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={styles.tableSearchInput}
+              className={commonStyles.tableSearchInput}
             />
           </div>
-          <table className={styles.table}>
+          <table className={tableStyles.table}>
             <thead>
               <tr>
-                {headers.map(header => <th key={header}>{header}</th>)}
+                <th key={headers[0].label} className={headers[0].className}>
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={handleSelectAll}
+                  />
+                </th>
+                {headers.slice(1).map(header => <th key={header.label} className={header.className}>{header.label}</th>)}
               </tr>
             </thead>
             <tbody>
               {renderTableBody()}
             </tbody>
           </table>
-          <div className={styles.bottomControls}>
-            <div className={styles.buttonGroup}>
-              <button className={styles.button} onClick={handleAdd}>추가</button>
-              <button className={styles.button} onClick={handleEdit}>수정</button>
-              <button className={styles.button} onClick={handleDelete}>삭제</button>
-              <button className={styles.button} onClick={handleViewQuotation} disabled={selectedQuoteIds.length !== 1}>견적서</button>
+          <div className={paginationStyles.bottomControls}>
+            <div className={commonStyles.buttonGroup}>
+              <button className={commonStyles.button} onClick={handleAdd}>추가</button>
+              <button className={commonStyles.button} onClick={handleEdit}>수정</button>
+              <button className={commonStyles.button} onClick={handleDelete}>삭제</button>
+              <button className={commonStyles.button} onClick={handleViewQuotation} disabled={selectedQuoteIds.length !== 1}>견적서</button>
             </div>
             {renderPagination()}
           </div>

@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
+// 분리된 CSS 파일들을 각각 가져옵니다.
+import dashboardStyles from "@/styles/Dashboard.module.css";
+import loginStyles from "@/styles/Login.module.css";
+
+import { useEffect, useState } from 'react';
+import CompanyRegistration from '../components/CompanyRegistration';
+import QuoteManagement from '../components/QuoteManagement';
 import { supabase } from '../lib/supabaseClient';
-import styles from "@/styles/Home.module.css";
-import CompanyRegistration from '../components/CompanyRegistration'; // Import the new component
-import QuoteManagement from '../components/QuoteManagement'; // Import the new component
 
 export default function Home() {
   const [session, setSession] = useState(null);
@@ -10,8 +13,8 @@ export default function Home() {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
-  const [activeTab, setActiveTab] = useState('구매'); // For dashboard
-  const [showSalesSubMenu, setShowSalesSubMenu] = useState(false); // State for sales sub-menu
+  const [activeTab, setActiveTab] = useState('구매');
+  const [showSalesSubMenu, setShowSalesSubMenu] = useState(false);
 
   useEffect(() => {
     const getSession = async () => {
@@ -67,14 +70,13 @@ export default function Home() {
     await supabase.auth.signOut();
   };
 
-    const renderDashboard = () => {
+  const renderDashboard = () => {
     const renderContent = () => {
       switch (activeTab) {
         case '업체 등록':
           return <CompanyRegistration />;
         case '견적':
           return <QuoteManagement />;
-        // Add other cases for other tabs here in the future
         default:
           return <h1>{activeTab}</h1>;
       }
@@ -101,23 +103,23 @@ export default function Home() {
     ];
 
     return (
-      <div className={styles.dashboardContainer}>
-        <nav className={styles.navBar}>
-          <div className={styles.navLinks}>
+      <div className={dashboardStyles.dashboardContainer}>
+        <nav className={dashboardStyles.navBar}>
+          <div className={dashboardStyles.navLinks}>
             {navItems.map(item => (
               <div key={item.label}>
                 <div 
-                  className={`${styles.navLink} ${activeTab === item.tab ? styles.navLinkActive : ''}`}
+                  className={`${dashboardStyles.navLink} ${activeTab === item.tab ? dashboardStyles.navLinkActive : ''}`}
                   onClick={item.isToggle ? item.onClick : () => setActiveTab(item.tab)}
                 >
                   {item.label}
                 </div>
                 {item.isToggle && showSalesSubMenu && item.subItems && (
-                  <div className={styles.navSubMenu}>
+                  <div className={dashboardStyles.navSubMenu}>
                     {item.subItems.map(subItem => (
                       <div
                         key={subItem.label}
-                        className={`${styles.navLink} ${styles.navSubLink} ${activeTab === subItem.tab ? styles.navLinkActive : ''}`}
+                        className={`${dashboardStyles.navLink} ${dashboardStyles.navSubLink} ${activeTab === subItem.tab ? dashboardStyles.navLinkActive : ''}`}
                         onClick={() => setActiveTab(subItem.tab)}
                       >
                         {subItem.label}
@@ -128,15 +130,15 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <div className={styles.navSpacer}></div>
-          <div className={styles.userInfo}>
+          <div className={dashboardStyles.navSpacer}></div>
+          <div className={dashboardStyles.userInfo}>
             <p>{session.user.user_metadata.display_name || session.user.email}</p>
-            <button className={styles.logoutButton} onClick={handleLogout}>
+            <button className={dashboardStyles.logoutButton} onClick={handleLogout}>
               Logout
             </button>
           </div>
         </nav>
-        <main className={styles.mainContent}>
+        <main className={dashboardStyles.mainContent}>
           {renderContent()}
         </main>
       </div>
@@ -144,41 +146,41 @@ export default function Home() {
   };
 
   const renderLoginForm = () => (
-    <div className={styles.container}>
-       <div className={styles.formCard}>
-          <h1>{isSignUp ? 'Sign Up' : 'Login'}</h1>
-          <form className={styles.form} onSubmit={isSignUp ? handleSignUp : handleLogin}>
-            {isSignUp && (
-              <input
-                className={styles.input}
-                type="text"
-                placeholder="Your display name"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
-              />
-            )}
+    <div className={loginStyles.container}>
+      <div className={loginStyles.formCard}>
+        <h1>{isSignUp ? 'Sign Up' : 'Login'}</h1>
+        <form className={loginStyles.form} onSubmit={isSignUp ? handleSignUp : handleLogin}>
+          {isSignUp && (
             <input
-              className={styles.input}
-              type="email"
-              placeholder="Your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              className={loginStyles.input}
+              type="text"
+              placeholder="Your display name"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
             />
-            <input
-              className={styles.input}
-              type="password"
-              placeholder="Your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button className={styles.button} type="submit">
-              {isSignUp ? 'Sign Up' : 'Login'}
-            </button>
-          </form>
-          <button onClick={() => setIsSignUp(!isSignUp)} className={styles.toggleButton}>
-            {isSignUp ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
+          )}
+          <input
+            className={loginStyles.input}
+            type="email"
+            placeholder="Your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            className={loginStyles.input}
+            type="password"
+            placeholder="Your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button className={loginStyles.button} type="submit">
+            {isSignUp ? 'Sign Up' : 'Login'}
           </button>
-        </div>
+        </form>
+        <button onClick={() => setIsSignUp(!isSignUp)} className={loginStyles.toggleButton}>
+          {isSignUp ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
+        </button>
+      </div>
     </div>
   );
 

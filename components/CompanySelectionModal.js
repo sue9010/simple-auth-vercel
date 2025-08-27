@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import styles from '../styles/Home.module.css';
+import modalStyles from '../styles/Modal.module.css';
+import tableStyles from '../styles/Table.module.css';
+import commonStyles from '../styles/Common.module.css';
 
 export default function CompanySelectionModal({ onSelectCompany, onClose }) {
   const [companies, setCompanies] = useState([]);
@@ -51,14 +53,14 @@ export default function CompanySelectionModal({ onSelectCompany, onClose }) {
   ];
 
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalContent} style={{ maxWidth: '1600px' }}>
+    <div className={modalStyles.modalOverlay}>
+      <div className={modalStyles.modalContent} style={{ maxWidth: '1600px' }}>
         <h2>업체 선택</h2>
-        <div className={styles.searchContainer}>
+        <div className={modalStyles.searchContainer}>
           <input
             type="text"
             placeholder="업체명 검색..."
-            className={styles.searchInput}
+            className={modalStyles.searchInput}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -66,7 +68,7 @@ export default function CompanySelectionModal({ onSelectCompany, onClose }) {
         {loading && <p>로딩 중...</p>}
         {error && <p style={{ color: 'red' }}>에러: {error}</p>}
         {!loading && !error && (
-          <table className={styles.table}>
+          <table className={tableStyles.table}>
             <thead>
               <tr>
                 {headers.map((header, index) => (
@@ -84,7 +86,7 @@ export default function CompanySelectionModal({ onSelectCompany, onClose }) {
               ) : (
                 filteredCompanies.map(company => (
                   <tr key={company.id}>
-                    <td className={styles.checkboxCell}> {/* Reusing checkboxCell for radio button */} 
+                    <td className={tableStyles.checkboxCell}> {/* Reusing checkboxCell for radio button */} 
                       <input
                         type="radio"
                         name="selectedCompany"
@@ -108,9 +110,9 @@ export default function CompanySelectionModal({ onSelectCompany, onClose }) {
             </tbody>
           </table>
         )}
-        <div className={styles.buttonGroup} style={{ justifyContent: 'flex-end', marginTop: '1rem' }}>
-          <button className={styles.button} onClick={onClose} style={{ backgroundColor: '#6c757d' }}>취소</button>
-          <button className={styles.button} onClick={handleSelectClick} disabled={!selectedCompanyId}>선택</button>
+        <div className={commonStyles.buttonGroup} style={{ justifyContent: 'flex-end', marginTop: '1rem' }}>
+          <button className={commonStyles.button} onClick={onClose} style={{ backgroundColor: '#6c757d' }}>취소</button>
+          <button className={commonStyles.button} onClick={handleSelectClick} disabled={!selectedCompanyId}>선택</button>
         </div>
       </div>
     </div>

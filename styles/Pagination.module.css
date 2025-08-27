@@ -1,0 +1,37 @@
+/* Pagination Styles */
+.bottomControls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.pagination {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  border: 1px solid #dee2e6;
+  background-color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-radius: 4px;
+  color: #636363;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #f1f3f5;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  color: #636363;
+}
+
+.pagination .activePage {
+  background-color: #0070f3;
+  color: white;
+  border-color: #0070f3;
+}

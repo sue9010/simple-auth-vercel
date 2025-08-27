@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import styles from '../styles/Home.module.css';
+import tableStyles from '../styles/Table.module.css';
+import commonStyles from '../styles/Common.module.css';
 import CompanyForm from './CompanyForm'; // Import the new form component
 
 export default function CompanyRegistration() {
@@ -134,7 +135,7 @@ export default function CompanyRegistration() {
 
     return companies.map(company => (
       <tr key={company.id}>
-        <td className={styles.checkboxCell}>
+        <td className={tableStyles.checkboxCell}>
           <input
             type="checkbox"
             checked={selectedCompanyIds.includes(company.id)}
@@ -161,7 +162,7 @@ export default function CompanyRegistration() {
         <CompanyForm onCancel={handleFormCancel} fetchCompanies={fetchCompanies} initialData={companyToEdit} />
       ) : (
         <>
-          <table className={styles.table}>
+          <table className={tableStyles.table}>
             <thead>
               <tr>
                 {headers.map(header => <th key={header}>{header}</th>)}
@@ -171,10 +172,10 @@ export default function CompanyRegistration() {
               {renderTableBody()}
             </tbody>
           </table>
-          <div className={styles.buttonGroup}>
-            <button className={styles.button} onClick={() => setShowForm(true)}>추가</button>
-            <button className={styles.button} onClick={handleEditClick}>수정</button>
-            <button className={styles.button} onClick={handleDeleteClick}>삭제</button>
+          <div className={commonStyles.buttonGroup}>
+            <button className={commonStyles.button} onClick={() => setShowForm(true)}>추가</button>
+            <button className={commonStyles.button} onClick={handleEditClick}>수정</button>
+            <button className={commonStyles.button} onClick={handleDeleteClick}>삭제</button>
           </div>
         </>
       )}

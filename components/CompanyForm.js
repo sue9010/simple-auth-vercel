@@ -3,7 +3,8 @@ import countries from '../data/countries.json'; // Import the country list
 import currencies from '../data/currencies.json'; // Import the currency list
 import shippingMethods from '../data/shipping_methods.json'; // Import the shipping methods list
 import { supabase } from '../lib/supabaseClient';
-import styles from '../styles/Home.module.css'; // Adjust path as needed
+import loginStyles from '../styles/Login.module.css';
+import autocompleteStyles from '../styles/Autocomplete.module.css';
 
 export default function CompanyForm({ onCancel, fetchCompanies, initialData }) { // Receive onCancel prop
   // State for each input field
@@ -164,15 +165,15 @@ export default function CompanyForm({ onCancel, fetchCompanies, initialData }) {
   ];
 
   return (
-    <div className={styles.formCard} style={{ maxWidth: '600px', margin: 'auto' }}>
+    <div className={loginStyles.formCard} style={{ maxWidth: '600px', margin: 'auto' }}>
       <h1>{initialData ? '업체 정보 수정' : '신규 업체 등록'}</h1>
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={handleSubmit} className={loginStyles.form}>
         {fields.map(field => (
-          <div key={field.name} className={styles.formField}>
-            <label htmlFor={field.name} className={styles.label}>{field.label}</label>
+          <div key={field.name} className={loginStyles.formField}>
+            <label htmlFor={field.name} className={loginStyles.label}>{field.label}</label>
             <input
               id={field.name}
-              className={styles.input}
+              className={loginStyles.input}
               type="text"
               name={field.name}
               value={formData[field.name]}
@@ -206,11 +207,11 @@ export default function CompanyForm({ onCancel, fetchCompanies, initialData }) {
               onKeyDown={field.name === 'country' || field.name === 'currency' || field.name === 'shipping_method' ? handleKeyDown : undefined} // Add keydown for country, currency, and shipping_method fields
             />
             {currentAutocompleteField === field.name && showSuggestions && suggestions.length > 0 && (
-              <ul className={styles.autocompleteDropdown}>
+              <ul className={autocompleteStyles.autocompleteDropdown}>
                 {suggestions.map((suggestion, index) => (
                   <li
                     key={suggestion}
-                    className={`${styles.autocompleteItem} ${index === activeSuggestionIndex ? styles.autocompleteItemActive : ''}`}
+                    className={`${autocompleteStyles.autocompleteItem} ${index === activeSuggestionIndex ? autocompleteStyles.autocompleteItemActive : ''}`}
                     onClick={() => handleSelectSuggestion(suggestion)}
                     onMouseEnter={() => setActiveSuggestionIndex(index)} // Highlight on hover
                   >
@@ -221,9 +222,9 @@ export default function CompanyForm({ onCancel, fetchCompanies, initialData }) {
             )}
           </div>
         ))}
-        <div className={styles.buttonGroup} style={{ justifyContent: 'flex-end' }}>
-          <button type="button" className={styles.button} onClick={onCancel} style={{ backgroundColor: '#6c757d' }} disabled={submitting}>취소</button>
-          <button type="submit" className={styles.button} disabled={submitting}>저장</button>
+        <div className={loginStyles.buttonGroup} style={{ justifyContent: 'flex-end' }}>
+          <button type="button" className={loginStyles.button} onClick={onCancel} style={{ backgroundColor: '#6c757d' }} disabled={submitting}>취소</button>
+          <button type="submit" className={loginStyles.button} disabled={submitting}>저장</button>
         </div>
       </form>
     </div>
