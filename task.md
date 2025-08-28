@@ -1,67 +1,10 @@
-# Project Progress
+## 2025년 8월 28일 목요일
 
-## Completed Tasks
+### CompanyRegistration.js 에러 수정
 
-- [x] **Dependency Installation**: Installed `@supabase/supabase-js` library.
-- [x] **Environment Setup**: Created `.env.local` with placeholder variables for Supabase credentials.
-- [x] **Supabase Client**: Created `lib/supabaseClient.js` to initialize and export the Supabase client.
-- [x] **UI/Logic Implementation**: Implemented the login/logout UI and logic in `pages/index.js`.
-- [x] **Sign-up Feature**: Added a sign-up form and logic to the main page.
-- [x] **UI Improvement**: Redesigned the login/signup page to be simple and modern.
-- [x] **Display Name Feature**: Added display name to sign-up and show it on login.
-- [x] **UX Improvement**: Changed sign-up confirmation from an alert to a new window with a message.
-- [x] **Dashboard UI**: Implemented a basic dashboard layout with a left navigation bar.
-- [x] **Dashboard Feature**: Added '업체 등록' and '제품 등록' tabs to the navigation bar.
-- [x] **Company Registration UI**: Created the table and button UI for the '업체 등록' page.
-- [x] **Database Connection**: Created 'companies' table in Supabase and set RLS policy.
-- [x] **Read Feature**: Implemented data fetching from Supabase to display companies in the table.
-- [x] **UI Fix**: Darkened the table header and body text color for better visibility.
-- [x] **Create Feature UI**: Created a new page for adding companies and linked the '추가' button.
-- [x] **UI Fix**: Set input field background to white and text color to black.
-- [x] **Refactor: Company Form Integration**: Integrated company form into dashboard, removed standalone page.
-- [x] **UI Improvement**: Replaced input placeholders with permanent labels for clarity.
-- [x] **Create Feature**: Implemented data insertion into Supabase for new companies.
-- [x] **Bug Fix**: Implemented immediate table refresh after new company creation.
-- [x] **Update Feature**: Implemented data update functionality for companies.
-- [x] **UI Fix**: Styled table checkboxes (size, centering, white interior).
-- [x] **UI Fix**: Removed border from the table cell containing the checkbox.
-- [x] **UI Improvement**: Made '업체명' field read-only in company edit form.
-- [x] **Autocomplete Feature**: Implemented autocomplete for '국가' field using static country data.
-- [x] **UI Fix**: Set autocomplete suggestion text color to black.
-- [x] **UX Improvement**: Added keyboard navigation (arrow keys, Enter, Esc) to country autocomplete.
-- [x] **Autocomplete Feature (Currency)**: Implemented autocomplete for '통화' field using static currency data.
-- [x] **Autocomplete Feature (Shipping Method)**: Implemented autocomplete for '운송방법' field using static shipping method data.
-- [x] **Dashboard Feature**: Added collapsible sub-menu to '판매' navigation link.
-- [x] **UI Fix**: Corrected sub-menu active text color and ensured all previous CSS styles are present.
-- [x] **Quote Management UI**: Created the table and button UI for the '견적' page, including checkbox selection.
-- [x] **Quote Form UI**: Created the quote registration form with main section, dynamic line items, and total calculation.
-- [x] **Quote Form UI**: Set '날짜' field default to today's date.
-- [x] **Quote Form Feature**: Implemented auto-fill for '통화' and '메모' based on selected '업체명'.
-- [x] **Quote Form Feature**: Replaced '업체명' autocomplete with a modal for company selection.
-- [x] **Company Selection Modal**: Added search functionality by '업체명'.
-- [x] **UI Fix**: Styled radio buttons to be white circles and search input background to white in Company Selection Modal.
-- [x] **Quote Form Feature**: Implemented auto-fill for '부가세율' based on selected company's '통화'.
-- [x] **Quote Form Feature**: Implemented saving new quotes and line items to Supabase.
-- [x] **Quote Management Feature**: Implemented reading and displaying quotes from Supabase.
-- [x] **Quote Management Feature (Update)**: Implemented updating quotes and their line items.
-- [x] **UI Fix (Quote Form)**: Adjusted 'Add Line Item' button size and position.
-- [x] **Quote Management Feature (Delete)**: Implemented deleting quotes and their line items.
-- [x] **UI Fix (Quote Table)**: Changed 'Memo' column to 'Remarks'.
-- [x] **Bug Fix (Quote Form)**: Removed incorrect 'company_id' logic to align with database schema.
-- [x] **Quote Management Feature (Search)**: Added search functionality by company name.
-- [x] **UI Fix (Quote Table)**: Created and applied a dedicated CSS class for the table search bar to fix width issues.
-- [x] **Quote Management Feature (Pagination)**: Added client-side pagination to the quotes table.
-- [x] **Quote Management Feature (View)**: Created a printable quotation template page and linked it from the main table.
-- [x] **Bug Fix (Quotation Template)**: Fixed CSS module syntax error by moving global print styles to globals.css.
-- [x] **UI Improvement (Quotation View)**: Consolidated control buttons and language selection into QuotationTemplate component.
-- [x] **UI Improvement (Quotation Template)**: Unified height of control buttons to 38px.
-- [x] **UI Improvement (Quotation Template)**: Fixed vertical alignment of control buttons.
-- [x] **UI Improvement (Quotation Template)**: Fixed vertical alignment of text within control buttons.
-- [x] **UI Improvement (Quotation Template)**: Removed footer and ensured totals table sticks to bottom of page.
-- [x] **Quote Management Feature (Download)**: Implemented PDF download functionality for quotation template.
-- [x] **Quote Management Feature (Download)**: Changed PDF filename format to include company name and formatted date.
-- [x] **Bug Fix (Quotation Template)**: Defined 'formattedDate' variable in handleDownload function.
-- [x] **Quote Form Feature**: Removed client-side 'quotation_id' generation logic.
-- [x] **Quote Form UI**: 'quotation_id' field now only displayed in edit mode (not for new quotes).
-- [x] **Supabase Feature**: Implemented server-side sequential 'quotation_id' generation in Supabase (Q-YYMMDD-XXX format).
-- [x] **CSS Refactoring**: Created `styles/CompanyForm.module.css` and refactored `CompanyForm.js` to use it, along with `commonStyles` for generic buttons.
+- **문제**: `CompanyRegistration.js` 파일에서 "Objects are not valid as a React child" 에러 발생. `headers` 배열의 객체를 직접 React 자식으로 렌더링하려고 시도하여 발생.
+- **원인**: `<th>` 태그 내에서 `headers.map(header => <th key={header}>{header}</th>)`와 같이 `header` 객체 전체를 렌더링하려고 했기 때문.
+- **해결**: `header` 객체의 `label` 속성을 렌더링하고, `className` 속성을 적용하도록 수정.
+  - 변경 전: `{headers.map(header => <th key={header}>{header}</th>)}`
+  - 변경 후: `{headers.map(header => <th key={header.label} className={header.className}>{header.label}</th>)}`
+- **확인**: `QuoteManagement.js` 파일의 `headers` 사용 방식을 분석하여, 해당 파일에서는 `header.label`을 명시적으로 사용하여 에러가 발생하지 않았음을 확인.

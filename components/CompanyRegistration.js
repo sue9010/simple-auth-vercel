@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import tableStyles from '../styles/Table.module.css';
 import commonStyles from '../styles/Common.module.css';
+import tableStyles from '../styles/Table.module.css';
 import CompanyForm from './CompanyForm'; // Import the new form component
 
 export default function CompanyRegistration() {
@@ -12,10 +12,20 @@ export default function CompanyRegistration() {
   const [selectedCompanyIds, setSelectedCompanyIds] = useState([]); // State for selected company IDs
   const [companyToEdit, setCompanyToEdit] = useState(null); // State for company being edited
 
+
+
   const headers = [
-    '', // Checkbox column header
-    '업체명', '국가', '주소', '담당자', '전화번호', 
-    '이메일', '통화', '운송방법', '운송계정', '메모'
+    { label: "", className: tableStyles.checkboxCol },
+    { label: "업체명" },
+    { label: "국가" },
+    { label: "주소" },
+    { label: "담당자" },
+    { label: "전화번호" },
+    { label: "이메일"},
+    { label: "통화",className: tableStyles.Col1 },
+    { label: "운송방법",className: tableStyles.Col1  },
+    { label: "운송계정" },
+    { label: "메모" }
   ];
 
   // Function to fetch companies
@@ -165,7 +175,7 @@ export default function CompanyRegistration() {
           <table className={tableStyles.table}>
             <thead>
               <tr>
-                {headers.map(header => <th key={header}>{header}</th>)}
+                {headers.map(header => <th key={header.label} className={header.className}>{header.label}</th>)}
               </tr>
             </thead>
             <tbody>
